@@ -6,6 +6,7 @@ import { PlansAndPricingComponent } from './components/plans-and-pricing/plans-a
 import { CourseByCategoryComponent } from './components/course/course-by-category/course-by-category.component';
 import { CategoryComponent } from './components/course/category/category.component';
 import { BrowseCourseComponent } from './components/course/browse-course/browse-course.component';
+import { CourseDetailsComponent } from './components/course/course-details/course-details.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -16,5 +17,5 @@ export const routes: Routes = [
     // { path: 'course/browse', component: BrowseCourseComponent },
     { path: 'course/category', component: CategoryComponent },
     { path: 'course/category/:categoryId', component: CourseByCategoryComponent },//anything after the colon is a parameter or variable
-
+    { path: 'course/details/:courseId', component: CourseDetailsComponent},
 ];
