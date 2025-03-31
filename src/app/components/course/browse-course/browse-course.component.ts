@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { MOCK_COURSES } from '../../../mock-database/mock-courses';
 import { Course } from './../../../models/course.model';
 import {
   Component,
@@ -10,6 +9,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { CourseService } from '../../../services/course.service';
 
 @Component({
   selector: 'app-browse-course',
@@ -21,18 +21,8 @@ import { RouterModule } from '@angular/router';
 export class BrowseCourseComponent implements OnInit, OnChanges {
   courses: Course[] = [];
   @Input() categoryId: number = 0;
-  constructor() {
-    this.courses = MOCK_COURSES;
-  }
+  constructor(private courseService: CourseService) {}
 
-  processCourse() {
-    this.getCourseByCategory(this.categoryId);
-  }
-  getCourseByCategory(categoryId: number) {
-    this.courses = MOCK_COURSES.filter(
-      (course) => course.categoryId == categoryId
-    );
-  }
   //ngOnInit invoke when the component is initialized
   //ngOnInit is a lifecycle hook that is called after the component has been initialized
   ngOnInit(): void {
@@ -40,8 +30,17 @@ export class BrowseCourseComponent implements OnInit, OnChanges {
   }
   //ngOnChanges invoke when the input property changes
   //ngOnChanges is a lifecycle hook that is called when the input properties of the component change
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(_changes: SimpleChanges): void {
     this.processCourse();
+  }
+  
+  processCourse() {
+    this.getCourseByCategory(this.categoryId);
+  }
+  getCourseByCategory(categoryId: number) {
+    this.courseService.getCourseByCategoryId(categoryId).subscribe((data) => {
+      this.courses = data;
+    });
   }
 
   formatPrice(price: number): string {
