@@ -3,6 +3,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Course } from '../models/course.model';
+import { CourseDetail } from '../models/courseDetail.model';
 
 @Injectable({
   providedIn: 'root',
@@ -15,8 +16,8 @@ export class CourseService {
     return this.http.get<Course[]>(`${this.baseUrl}`);
   }
 
-  getCourseDetails(courseId: number): Observable<Course> {
-    return this.http.get<Course>(`${this.baseUrl}/Details/${courseId}`);
+  getCourseDetails(courseId: number): Observable<CourseDetail> {
+    return this.http.get<CourseDetail>(`${this.baseUrl}/Details/${courseId}`);
   }
 
   getCourseByCategoryId(categoryId: number): Observable<Course[]> {

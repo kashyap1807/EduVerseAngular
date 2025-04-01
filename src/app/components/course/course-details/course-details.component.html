@@ -1,2 +1,168 @@
-<p>course-details works!</p>
-<p>{{courseId}}</p>
+<div *ngIf="courseDetails" class="course-details container">
+  <div class="row">
+    <!-- Course Title Section with Gradient Effect -->
+    <div class="title-gradient mb-4 text-center">
+      <h1>{{ courseDetails.title }}</h1>
+    </div>
+   
+<!-- Left side: Course Title, Meta Information -->
+<div class="col-md-4">
+  <!-- Course Meta Information -->
+  <div class="course-meta card mb-4 shadow-sm border-0">
+    <div class="card-body p-4">
+      <h2 class="meta-heading">Course Details</h2>
+      <p><strong>Duration:</strong> {{ courseDetails.duration }} hours</p>
+      <p><strong>Seats Available:</strong> {{ courseDetails.seatsAvailable || 'Unlimited' }}</p>
+      <p><strong>Start Date:</strong> {{ courseDetails.startDate | date }}</p>
+      <p><strong>End Date:</strong> {{ courseDetails.endDate | date }}</p>
+    </div>
+  </div>
+
+  <!-- Thumbnail Image if present -->
+  <div class="course-meta card mb-4 shadow-sm border-0" *ngIf="courseDetails.thumbnail">
+    <div class="card-body p-4">
+      <img [src]="courseDetails.thumbnail" alt="Course Thumbnail" class="img-fluid thumbnail-img">
+    </div>
+  </div>
+
+  <!-- User Rating -->
+  <div class="course-meta card shadow-sm border-0">
+    <div class="card-body p-4">
+      <h2 class="meta-heading">User Rating</h2>
+      <p><strong>Average Rating:</strong> {{ courseDetails.userRating.averageRating }} / 5</p>
+      <p>({{ courseDetails.userRating.totalRating }} ratings)</p>
+    </div>
+  </div>
+
+  <br>
+  <!-- Instructor Information -->
+  <!-- <div class="course-meta card shadow-sm border-0" *ngIf="instructorInfo">
+    <div class="card-body p-4">
+      <h2 class="meta-heading">Instructor</h2>
+      Instructor Information in Grid
+      <div class="row align-items-center">
+        Profile Picture (left on larger screens)
+        <div class="col-md-4 text-center mb-3 mb-md-0">
+          <img [src]="instructorInfo.profilePictureUrl" alt="Instructor" class="img-fluid instructor-img">
+        </div>
+
+        Instructor Details (right on larger screens)
+        <div class="col-md-8">
+          <p><strong>{{ instructorInfo.firstName }} {{ instructorInfo.lastName }}</strong></p>
+          <a [routerLink]="['/user/instructors']" routerLinkActive="router-link-active" class="btn btn-info mt-2">View Profile</a>
+        </div>
+      </div>
+    </div>
+  </div> -->
+</div>
+
+    <!-- Right side: Course Description, Collapsible Sessions, Reviews -->
+    <div class="col-md-8">
+      <!-- Course Description -->
+      <div class="course-description card mb-4 shadow-sm border-0">
+        <div class="card-body p-4">
+          <h2 class="description-heading">Description</h2>
+          <p [innerHTML]="courseDetails.description"></p>
+        </div>
+      </div>
+
+      <!-- Collapsible Sessions -->
+      <div class="course-sessions card mb-4 shadow-sm border-0">
+        <!-- <button class="btn btn-success mt-3" (click)="enroll()" [disabled]="!isLoggedIn">
+          {{isLoggedIn? 'It is Free! Enroll now': 'It is Free! Sign In to Enroll'}}
+        </button> -->
+        <br>
+        <div class="card-body p-4">
+          <h2 class="session-heading">Sessions</h2>
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item" *ngFor="let session of courseDetails.sessionDetails">
+              <h2 class="accordion-header" id="heading{{session.sessionId}}">
+                <button class="accordion-button" type="button" [attr.data-bs-toggle]="'collapse'"
+                  [attr.data-bs-target]="'#collapse' + session.sessionId" [attr.aria-expanded]="true"
+                  [attr.aria-controls]="'collapse' + session.sessionId">
+                  {{ session.title }}
+                </button>
+              </h2>
+              <div [id]="'collapse' + session.sessionId" class="accordion-collapse collapse show"
+                [attr.aria-labelledby]="'heading' + session.sessionId" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+
+                  <p [innerHTML]="session.description"></p>
+                  <!-- <button (click)="openVideo(session.videoUrl)" class="btn btn-primary">Watch Video</button> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews Section -->
+      <div class="reviews card shadow-sm border-0">
+
+        <div class="card-body p-4">
+          <h2 class="review-heading">Reviews</h2>
+
+          <div *ngIf="courseDetails.reviews && courseDetails.reviews.length > 0; else noReviews">
+            <div *ngFor="let review of courseDetails.reviews" class="review-item mb-4 p-3 border-bottom shadow-sm">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <h4 class="m-0"><small>User: </small>{{ review.userName }}</h4>
+
+                <!-- Static Rating with custom template -->
+                 <!-- [max]="5" [customTemplate]="starTemplate"  -->
+                <rating [ngModel]="review.rating" tyle="font-size: 24px; color: #0275d8;"></rating>
+              </div>
+
+              <div class="review-rating-info d-flex align-items-center">
+                <p class="m-0"><strong>Rating:</strong> {{ review.rating }} / 5</p>
+              </div>
+
+              <div class="review-comment mt-2">
+                <p class="mb-1">{{ review.comments }}</p>
+                <p class="text-muted"><em>Date:</em> {{ review.reviewDate | date }}</p>
+              </div>
+            </div>
+          </div>
+          <!-- Review Form Component -->
+          <!-- <app-review-form [courseId]="courseDetails.courseId" [userId]="userId"
+            (reviewSubmitted)="onReviewSubmitted($event)">
+          </app-review-form> -->
+          <ng-template #noReviews>
+            <div class="no-reviews alert alert-info">
+              There are no reviews yet for this course.
+            </div>
+          </ng-template>
+
+
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- Video Modal -->
+   <!-- *ngIf="videoUrl" -->
+  <!-- <div  class="modal fade show d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Watch Video</h5>
+          (click)="closeVideo()"
+          <button type="button" class="close" aria-label="Close" >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <iframe [src]="videoUrl | safe: 'resourceUrl'" width="100%" height="400px" frameborder="0"
+            allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+  </div> -->
+</div>
+
+<!-- Custom Template for star rating -->
+<ng-template #starTemplate let-index="index" let-value="value">
+  <span [style.color]="index < value ? '#ffcc00' : '#e4e5e9'">
+    {{ index < value ? '&#9733;' : '&#9734;' }} </span>
+</ng-template>
