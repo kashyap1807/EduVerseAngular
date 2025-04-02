@@ -1,0 +1,94 @@
+.about-us-container {
+    background: linear-gradient(135deg, #1f1c2c 0%, #928dab 100%);
+    color: #fff;
+    padding: 50px 20px;
+    border-radius: 10px;
+}
+
+.about-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    text-align: center;
+    color: #e2e2e2;
+}
+
+.mission-section, .vision-section, .history-section {
+    margin-top: 40px;
+}
+
+.mission-section h3, .vision-section h3, .history-section h3 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #f1c40f;
+}
+
+.mission-section p, .vision-section p, .history-section p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.mission-img, .vision-img {
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.team-section {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.team-section h3 {
+    font-size: 2rem;
+    color: #f1c40f;
+}
+
+.team-member {
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.team-member:hover {
+    transform: scale(1.05);
+}
+
+.team-img {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.team-member h5 {
+    margin-top: 15px;
+    font-size: 1.3rem;
+    color: #f1c40f;
+}
+
+.team-member p {
+    color: #e2e2e2;
+}
+
+.history-section {
+    margin-top: 60px;
+}
+
+.history-section h3 {
+    color: #f1c40f;
+}
+
+.history-section p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #e2e2e2;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .mission-img, .vision-img {
+        margin-bottom: 20px;
+    }
+}
