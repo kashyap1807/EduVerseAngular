@@ -10,18 +10,20 @@ import {
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CourseService } from '../../../services/course.service';
+import { PopoverModule } from 'ngx-bootstrap/popover';
 
 @Component({
   selector: 'app-browse-course',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule,PopoverModule],
   templateUrl: './browse-course.component.html',
   styleUrl: './browse-course.component.css',
 })
 export class BrowseCourseComponent implements OnInit, OnChanges {
+  constructor(private courseService: CourseService) {}
   courses: Course[] = [];
   @Input() categoryId: number = 0;
-  constructor(private courseService: CourseService) {}
+  @Input() browseAllCourse: boolean = false;
 
   //ngOnInit invoke when the component is initialized
   //ngOnInit is a lifecycle hook that is called after the component has been initialized
@@ -33,9 +35,13 @@ export class BrowseCourseComponent implements OnInit, OnChanges {
   ngOnChanges(_changes: SimpleChanges): void {
     this.processCourse();
   }
-  
+
   processCourse() {
-    this.getCourseByCategory(this.categoryId);
+    if (this.browseAllCourse) {
+      this.getAllCourses();
+    } else {
+      this.getCourseByCategory(this.categoryId);
+    }
   }
   getCourseByCategory(categoryId: number) {
     this.courseService.getCourseByCategoryId(categoryId).subscribe((data) => {
@@ -45,5 +51,12 @@ export class BrowseCourseComponent implements OnInit, OnChanges {
 
   formatPrice(price: number): string {
     return `$${price.toFixed(2)}`;
+  }
+
+  getAllCourses() {
+    debugger
+    this.courseService.getAllCourses().subscribe(data => {
+      this.courses = data;
+    });
   }
 }

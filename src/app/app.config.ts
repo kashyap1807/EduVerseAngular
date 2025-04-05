@@ -9,20 +9,24 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@a
 import { HttpRequestInterceptor } from './services/interceptor/spinner-interceptor';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PopoverModule } from 'ngx-bootstrap/popover';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    importProvidersFrom(CarouselModule.forRoot(),
+    importProvidersFrom(
+      CarouselModule.forRoot(),
       BrowserModule,
       BrowserAnimationsModule,
       NgxSpinnerModule.forRoot({ type: 'ball-scale-multiple' }),
+      PopoverModule.forRoot(),
       ToastrModule.forRoot({
         timeOut: 3000,
         positionClass: 'toast-top-right',
         preventDuplicates: true,
-      }),
+      })
     ),
-    provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes),
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
     {
