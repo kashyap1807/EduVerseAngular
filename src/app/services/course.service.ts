@@ -23,4 +23,16 @@ export class CourseService {
   getCourseByCategoryId(categoryId: number): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/Category/${categoryId}`);
   }
+
+  createCourse(course: Course): Observable<any>{
+    return this.http.post(`${this.baseUrl}`, course);
+  }
+
+  updateCourse(courseId: number, course: Course): Observable<any>{
+    return this.http.put(`${this.baseUrl}/${courseId}`, course);
+  }
+
+  deleteCourse(courseId: number): Observable<any>{
+    return this.http.delete(`${this.baseUrl}/${courseId}`);
+  }
 }
