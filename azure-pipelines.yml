@@ -19,7 +19,7 @@ steps:
     npm install
   displayName: 'install dependencies'
 
-- script: npm run build prod
+- script: npm run build-prod
   displayName: 'Build Angular app'
 
 # - script: npm test
