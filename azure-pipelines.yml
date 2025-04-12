@@ -6,8 +6,7 @@
 trigger:
 - master
 
-pool:
-  vmImage: ubuntu-latest
+pool: 'new-agent-pool'
 
 steps:
 - task: NodeTool@0
@@ -20,7 +19,10 @@ steps:
     npm install
   displayName: 'install dependencies'
 
-- script: npm run build prod
+- script: npm ci
+  displayName: 'Install dependencies'
+
+- script: npm run build-prod
   displayName: 'Build Angular app'
 
 # - script: npm test
