@@ -1,6 +1,6 @@
 import { EnvironmentConfiguration } from "../app/models/environment-configuration.model";
 
-const serverUrl = 'https://eduversebykashyap.azurewebsites.net/api';
+const serverUrl = 'https://eduversebykashyap-api.azurewebsites.net/api';
 
 export const environment: EnvironmentConfiguration = {
   env_name: 'prod',
