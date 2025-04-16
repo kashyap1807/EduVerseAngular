@@ -11,6 +11,29 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 
+export const b2cPolicies = {
+  names: {
+    signUpSignIn: 'B2C_1_susi',
+    resetPassword: 'B2C_1_password_reset',
+    editProfile: 'B2C_1_profile_update',
+  },
+  authorities: {
+    signUpSignIn: {
+      authority:
+        'https://eduversebykashyap.b2clogin.com/eduversebykashyap.onmicrosoft.com/B2C_1_susi',
+    },
+    resetPassword: {
+      authority:
+        'https://eduversebykashyap.b2clogin.com/eduversebykashyap.onmicrosoft.com/B2C_1_password_reset',
+    },
+    editProfile: {
+      authority:
+        'https://eduversebykashyap.b2clogin.com/eduversebykashyap.onmicrosoft.com/B2C_1_profile_update',
+    },
+  },
+  authorityDomain: 'eduversebykashyap.b2clogin.com',
+};
+
 export const appConfig: ApplicationConfig = {
   providers: [
     importProvidersFrom(
