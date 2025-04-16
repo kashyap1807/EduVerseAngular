@@ -9,4 +9,12 @@ export const environment: EnvironmentConfiguration = {
   apiEndpoints: {
     userProfile: 'user-profiles',
   },
+  adb2cConfig: {
+    clientId: "",
+    readScopeUrl: "",
+    scopeUrls: [],
+    writeScopeUrl: "",
+    apiEndpointUrl: ""
+  },
+  cacheTimeInMinutes: 0
 };
