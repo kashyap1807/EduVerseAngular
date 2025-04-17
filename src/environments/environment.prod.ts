@@ -10,11 +10,16 @@ export const environment: EnvironmentConfiguration = {
     userProfile: 'user-profiles',
   },
   adb2cConfig: {
-    clientId: "",
-    readScopeUrl: "",
-    scopeUrls: [],
-    writeScopeUrl: "",
-    apiEndpointUrl: ""
+    clientId: '200c783e-b9e7-4c35-a503-7ec49a1700f5',
+    readScopeUrl:
+      'https://eduversebykashyap.onmicrosoft.com/eduversebykashyap/prod/api/User.Read',
+    writeScopeUrl:
+      'https://eduversebykashyap.onmicrosoft.com/eduversebykashyap/prod/api/User.Write',
+    scopeUrls: [
+      'https://eduversebykashyap.onmicrosoft.com/eduversebykashyap/prod/api/User.Write',
+      'https://eduversebykashyap.onmicrosoft.com/eduversebykashyap/prod/api/User.Write',
+    ],
+    apiEndpointUrl: 'https://eduversebykashyap-api.azurewebsites.net/api',
   },
-  cacheTimeInMinutes: 0
+  cacheTimeInMinutes: 30,
 };
