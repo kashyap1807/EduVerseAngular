@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, ErrorHandler, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -23,12 +23,15 @@ import {
   ProtectedResourceScopes,
 } from '@azure/msal-angular';
 import { routes } from './app.routes';
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpRequestInterceptor } from './services/interceptor/spinner-interceptor';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 import { environment } from '../environments/environment';
+import { SafePipe } from './pipes/safe.pipe';
+import { GlobalErrorInterceptor } from './components/core/error-handling/global-error-handling.interceptor';
+import { GlobalErrorHandler } from './components/core/error-handling/global-error-handling.service';
 
 export const b2cPolicies = {
   names: {
@@ -87,10 +90,10 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
     Array<string | ProtectedResourceScopes> | null
   >();
   //have this set if more microservice used or requires different scope for different controllers
-  // protectedResourceMap.set(
-  //   environment.adb2cConfig.apiEndpointUrl, // This is for all controllers
-  //   environment.adb2cConfig.scopeUrls
-  // );
+  protectedResourceMap.set(
+    environment.adb2cConfig.apiEndpointUrl, // This is for all controllers
+    environment.adb2cConfig.scopeUrls
+  );
 
   protectedResourceMap.set(environment.adb2cConfig.apiEndpointUrl, [
     // {
@@ -188,6 +191,7 @@ export const appConfig: ApplicationConfig = {
       CarouselModule.forRoot(),
       BrowserModule,
       BrowserAnimationsModule,
+      SafePipe,
       NgxSpinnerModule.forRoot({ type: 'ball-scale-multiple' }),
       PopoverModule.forRoot(),
       ToastrModule.forRoot({
@@ -205,5 +209,34 @@ export const appConfig: ApplicationConfig = {
       useClass: HttpRequestInterceptor,
       multi: true,
     },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: GlobalErrorInterceptor,
+      multi: true,
+    },
+    // provideAnimationsAsync(),
+    //provideNoopAnimations(),
+    provideHttpClient(withInterceptorsFromDi(), withFetch()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: MsalInterceptor,
+      multi: true,
+    },
+    {
+      provide: MSAL_INSTANCE,
+      useFactory: MSALInstanceFactory,
+    },
+    {
+      provide: MSAL_GUARD_CONFIG,
+      useFactory: MSALGuardConfigFactory,
+    },
+    {
+      provide: MSAL_INTERCEPTOR_CONFIG,
+      useFactory: MSALInterceptorConfigFactory,
+    },
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
+    MsalService,
+    MsalGuard,
+    MsalBroadcastService,
   ],
 };
