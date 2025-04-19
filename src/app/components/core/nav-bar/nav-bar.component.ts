@@ -1,9 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalModule, MsalService } from '@azure/msal-angular';
-import { AuthenticationResult, PopupRequest, RedirectRequest } from '@azure/msal-browser';
+import { AuthenticationResult, EventMessage, EventType, InteractionStatus, PopupRequest, RedirectRequest } from '@azure/msal-browser';
+import { LoginService } from '../../../services/login.service';
+import { filter, Subject, takeUntil } from 'rxjs';
+import { Claim } from '../../../models/claim.model';
 
 @Component({
   selector: 'app-nav-bar',
@@ -12,15 +15,106 @@ import { AuthenticationResult, PopupRequest, RedirectRequest } from '@azure/msal
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css',
 })
-export class NavBarComponent {
+export class NavBarComponent implements OnInit,OnDestroy {
   loginDisplay = false;
+  isAdmin = false;
+  isIframe = false;
+  private readonly _destroying$ = new Subject<void>();
+  claims: Claim[] = [];
+  profilePictureUrl = '';
+
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private authService: MsalService,
     private msalBroadcastService: MsalBroadcastService,
-    // private loginService: LoginService,
+    private loginService: LoginService,
     private router: Router
   ) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      // this.getUserInfo();
+    }, 2000);
+
+    this.loginService.claims$.subscribe((s) => {
+      const roles = s.filter((f) => f.claim === 'extension_userRoles');
+      if (roles.length && !this.isAdmin) {
+        this.isAdmin =
+          roles[0].value.split(',').filter((f) => f === 'Admin').length > 0;
+      }
+    });
+
+    this.authService
+      .handleRedirectObservable()
+      .subscribe((result: AuthenticationResult) => {
+        if (result) {
+          const redirectStartPage = localStorage.getItem('redirectStartPage'); // Retrieve the URL from local storage
+          if (redirectStartPage) {
+            this.router.navigate([redirectStartPage]);
+            localStorage.removeItem('redirectStartPage'); // Clear the URL from local storage
+          }
+        }
+      });
+
+    //this.authService.handleRedirectObservable().subscribe();
+    this.isIframe = window !== window.parent && !window.opener; // Remove this line to use Angular Universal
+
+    this.setLoginDisplay();
+
+    this.authService.instance.enableAccountStorageEvents(); // Optional - This will enable ACCOUNT_ADDED and ACCOUNT_REMOVED events emitted when a user logs in or out of another tab or window
+    this.msalBroadcastService.msalSubject$
+      .pipe(
+        filter(
+          (msg: EventMessage) =>
+            msg.eventType === EventType.ACCOUNT_ADDED ||
+            msg.eventType === EventType.ACCOUNT_REMOVED
+        )
+      )
+      .subscribe((result: EventMessage) => {
+        if (this.authService.instance.getAllAccounts().length === 0) {
+          window.location.pathname = '/';
+        } else {
+          this.setLoginDisplay();
+        }
+      });
+
+    //To subscribe for claims
+    this.loginService.claims$.subscribe((c) => {
+      this.claims = c;
+    });
+
+    this.msalBroadcastService.inProgress$
+      .pipe(
+        filter(
+          (status: InteractionStatus) => status === InteractionStatus.None
+        ),
+        takeUntil(this._destroying$)
+      )
+      .subscribe(() => {
+        this.setLoginDisplay();
+        this.checkAndSetActiveAccount();
+      });
+  }
+
+  checkAndSetActiveAccount() {
+    /**
+     * If no active account set but there are accounts signed in, sets first account to active account
+     * To use active account set here, subscribe to inProgress$ first in your component
+     * Note: Basic usage demonstrated. Your app may require more complicated account selection logic
+     */
+    let activeAccount = this.authService.instance.getActiveAccount();
+
+    if (
+      !activeAccount &&
+      this.authService.instance.getAllAccounts().length > 0
+    ) {
+      let accounts = this.authService.instance.getAllAccounts();
+      this.authService.instance.setActiveAccount(accounts[0]);
+    }
+  }
+  setLoginDisplay() {
+    this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
+  }
 
   loginRedirect() {
     if (this.msalGuardConfig.authRequest) {
@@ -56,5 +150,10 @@ export class NavBarComponent {
     } else {
       this.authService.logoutRedirect();
     }
+  }
+
+  ngOnDestroy(): void {
+    this._destroying$.next(undefined);
+    this._destroying$.complete();
   }
 }
