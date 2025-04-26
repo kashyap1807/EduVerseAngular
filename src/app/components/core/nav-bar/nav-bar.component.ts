@@ -7,6 +7,7 @@ import { AuthenticationResult, EventMessage, EventType, InteractionStatus, Popup
 import { LoginService } from '../../../services/login.service';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { Claim } from '../../../models/claim.model';
+import { UserProfileService } from '../../../services/user-profile.service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -15,7 +16,7 @@ import { Claim } from '../../../models/claim.model';
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css',
 })
-export class NavBarComponent implements OnInit,OnDestroy {
+export class NavBarComponent implements OnInit, OnDestroy {
   loginDisplay = false;
   isAdmin = false;
   isIframe = false;
@@ -28,7 +29,8 @@ export class NavBarComponent implements OnInit,OnDestroy {
     private authService: MsalService,
     private msalBroadcastService: MsalBroadcastService,
     private loginService: LoginService,
-    private router: Router
+    private router: Router,
+    private userService:UserProfileService
   ) {}
 
   ngOnInit(): void {
@@ -112,6 +114,13 @@ export class NavBarComponent implements OnInit,OnDestroy {
       this.authService.instance.setActiveAccount(accounts[0]);
     }
   }
+
+  getUserInfo() {
+    this.userService.getUserProfile(this.loginService.userId).subscribe((s) => {
+      this.profilePictureUrl = s.profilePictureUrl ? s.profilePictureUrl : '';
+    });
+  }
+
   setLoginDisplay() {
     this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
   }

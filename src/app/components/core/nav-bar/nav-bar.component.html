@@ -44,21 +44,23 @@
       <ul class="navbar-nav">
         <li class="nav-item d-flex align-items-center">
            <!-- Profile Picture -->
-          <!-- <img
-            *ngIf="profilePictureUrl; else defaultAvatar"
+          <img
+            *ngIf="profilePictureUrl; else defaultAvatar;loginDisplay"
             [src]="profilePictureUrl"
             alt="Profile Picture"
             class="rounded-circle"
             style="width: 40px; height: 40px; object-fit: cover;"
-          /> -->
+          />
 
          <!-- Default Avatar -->
          <ng-template #defaultAvatar>
            <img
-             src="../../../../assets/images/default-avatar.png"
+            *ngIf="loginDisplay"
+             src="../../../../assets/images/defavatar.jpg"
              alt="Default Avatar"
              class="rounded-circle"
              style="width: 40px; height: 40px; object-fit: cover;"
+             [routerLink]="['/user/userId']" routerLinkActive="router-link-active" 
            />
          </ng-template>
           <a class="nav-link btn" *ngIf="!loginDisplay" (click)="loginRedirect()">Login</a>
