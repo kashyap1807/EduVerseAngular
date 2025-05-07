@@ -36,24 +36,24 @@
 
   <br>
   <!-- Instructor Information -->
-  <!-- <div class="course-meta card shadow-sm border-0" *ngIf="instructorInfo">
+  <div class="course-meta card shadow-sm border-0" *ngIf="instructorInfo">
     <div class="card-body p-4">
       <h2 class="meta-heading">Instructor</h2>
-      Instructor Information in Grid
+      <!-- Instructor Information in Grid -->
       <div class="row align-items-center">
-        Profile Picture (left on larger screens)
+        <!-- Profile Picture (left on larger screens) -->
         <div class="col-md-4 text-center mb-3 mb-md-0">
           <img [src]="instructorInfo.profilePictureUrl" alt="Instructor" class="img-fluid instructor-img">
         </div>
 
-        Instructor Details (right on larger screens)
+        <!-- Instructor Details (right on larger screens) -->
         <div class="col-md-8">
           <p><strong>{{ instructorInfo.firstName }} {{ instructorInfo.lastName }}</strong></p>
           <a [routerLink]="['/user/instructors']" routerLinkActive="router-link-active" class="btn btn-info mt-2">View Profile</a>
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
 </div>
 
     <!-- Right side: Course Description, Collapsible Sessions, Reviews -->
@@ -68,9 +68,9 @@
 
       <!-- Collapsible Sessions -->
       <div class="course-sessions card mb-4 shadow-sm border-0">
-        <!-- <button class="btn btn-success mt-3" (click)="enroll()" [disabled]="!isLoggedIn">
+        <button class="btn btn-success mt-3" (click)="enroll()" [disabled]="!isLoggedIn">
           {{isLoggedIn? 'It is Free! Enroll now': 'It is Free! Sign In to Enroll'}}
-        </button> -->
+        </button>
         <br>
         <div class="card-body p-4">
           <h2 class="session-heading">Sessions</h2>
@@ -108,8 +108,8 @@
                 <h4 class="m-0"><small>User: </small>{{ review.userName }}</h4>
 
                 <!-- Static Rating with custom template -->
-                 <!-- [max]="5" [customTemplate]="starTemplate"  -->
-                <rating [ngModel]="review.rating" tyle="font-size: 24px; color: #0275d8;"></rating>
+                <rating [ngModel]="review.rating" [max]="5" [customTemplate]="starTemplate"
+                  style="font-size: 24px; color: #0275d8;"></rating>
               </div>
 
               <div class="review-rating-info d-flex align-items-center">
@@ -141,14 +141,12 @@
   </div>
 
   <!-- Video Modal -->
-   <!--  -->
   <div *ngIf="videoUrl" class="modal fade show d-block" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Watch Video</h5>
-          
-          <button (click)="closeVideo()" type="button" class="close" aria-label="Close" >
+          <button type="button" class="close" aria-label="Close" (click)="closeVideo()">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>

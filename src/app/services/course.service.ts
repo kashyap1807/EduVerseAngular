@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Course } from '../models/course.model';
 import { CourseDetail } from '../models/courseDetail.model';
+import { Instructor } from '../models/instructor.model';
 
 @Injectable({
   providedIn: 'root',
@@ -34,5 +35,9 @@ export class CourseService {
 
   deleteCourse(courseId: number): Observable<any>{
     return this.http.delete(`${this.baseUrl}/${courseId}`);
+  }
+
+  getInstructorInfo(): Observable<Instructor[]> {
+    return this.http.get<Instructor[]>(`${this.baseUrl}/Instructors}`);
   }
 }
