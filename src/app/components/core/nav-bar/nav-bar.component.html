@@ -25,7 +25,11 @@
             </li>
           </ul>
         </li>
-       
+        <!-- Update Profile -->
+        <li class="nav-item" *ngIf="loginDisplay">
+          <a class="nav-link" [routerLink]="['/user/update-profile']" routerLinkActive="router-link-active">Update
+            Profile</a>
+        </li>
         <li class="nav-item">
           <a class="nav-link" [routerLink]="['/plans-and-price']" routerLinkActive="router-link-active" >Plans</a>
         </li>
