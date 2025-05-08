@@ -15,11 +15,12 @@ import { Payment } from '../../../models/payment.model';
 import { Enrollment } from '../../../models/enrollment.mode';
 import { Review } from '../../../models/review.model';
 import { RatingComponent, RatingModule } from 'ngx-bootstrap/rating';
+import { ReviewFormComponent } from '../review-form/review-form.component';
 
 @Component({
   selector: 'app-course-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, SafePipe, RatingModule],
+  imports: [CommonModule, FormsModule, RouterModule, SafePipe, RatingModule,ReviewFormComponent],
   templateUrl: './course-details.component.html',
   styleUrl: './course-details.component.css',
 })
