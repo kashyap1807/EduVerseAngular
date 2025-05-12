@@ -21,7 +21,7 @@ export const routes: Routes = [
   { path: 'course/category', component: CategoryComponent },
   { path: 'course/category/:categoryId', component: CourseByCategoryComponent }, //anything after the colon is a parameter or variable
   { path: 'course/details/:courseId', component: CourseDetailsComponent },
-  { path: 'user/:userId', component: ViewUserProfileComponent },
+  { path: 'user/instructors', component: ViewUserProfileComponent },
   { path: 'user/update-profile', component: UpdateProfileComponent },
   { path: 'course/enrollments', component: EnrollmentsComponent },
 ];

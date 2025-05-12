@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UserModel } from '../../../models/user.model';
 import { UserProfileService } from '../../../services/user-profile.service';
 import { ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-view-user-profile',
   standalone: true,
-  imports: [],
+  imports: [CommonModule,FormsModule],
   templateUrl: './view-user-profile.component.html',
   styleUrl: './view-user-profile.component.css',
 })
 export class ViewUserProfileComponent implements OnInit {
-  userId : number = 0;
+  @Input() userId = 25;
   user: UserModel = {
     userId: 0,
     displayName: '',
@@ -23,12 +25,9 @@ export class ViewUserProfileComponent implements OnInit {
     bio: '',
   };
 
-  constructor(private userService:UserProfileService,private route: ActivatedRoute,) {}
+  constructor(private userService:UserProfileService) {}
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe((params) => {
-      this.userId = Number(params.get('userId'));
-    });
+  ngOnInit(): void {    
     this.getUserProfile();
   }
 
