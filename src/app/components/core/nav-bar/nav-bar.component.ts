@@ -35,7 +35,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     setTimeout(() => {
-      // this.getUserInfo();
+      this.getUserInfo();
     }, 2000);
 
     this.loginService.claims$.subscribe((s) => {
