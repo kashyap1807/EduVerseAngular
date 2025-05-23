@@ -21,7 +21,7 @@
                     <h2>{{ course.title }}</h2>
                     <p class="price">{{ formatPrice(course.price) }}</p>
                 </div>
-                <!-- <p class="description">{{ course.description }}</p> -->
+                
                 <p class="description"
                 [popover]="course.description"
                 [popoverTitle]="course.title"
