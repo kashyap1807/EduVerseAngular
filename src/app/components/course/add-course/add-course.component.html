@@ -1,0 +1,177 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="mb-0">Add New Course</h2>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!-- Title -->
+          <div class="col-md-6 mb-3">
+            <label for="title" class="form-label">Course Title*</label>
+            <input
+              type="text"
+              class="form-control"
+              id="title"
+              formControlName="title"
+              [ngClass]="{'is-invalid': courseForm.get('title')?.invalid && courseForm.get('title')?.touched}"
+            >
+            <div class="invalid-feedback" *ngIf="courseForm.get('title')?.errors?.['required']">
+              Title is required
+            </div>
+            <div class="invalid-feedback" *ngIf="courseForm.get('title')?.errors?.['minlength']">
+              Title must be at least 3 characters long
+            </div>
+          </div>
+
+          <!-- Category -->
+          <div class="col-md-6 mb-3">
+            <label for="category" class="form-label">Category*</label>
+            <select
+              class="form-select"
+              id="category"
+              formControlName="categoryId"
+              [ngClass]="{'is-invalid': courseForm.get('categoryId')?.invalid && courseForm.get('categoryId')?.touched}"
+            >
+              <option value="">Select a category</option>
+              <option *ngFor="let category of categories" [value]="category.categoryId">
+                {{category.categoryName}}
+              </option>
+            </select>
+            <div class="invalid-feedback">
+              Please select a category
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="col-12 mb-3">
+            <label for="description" class="form-label">Description*</label>
+            <textarea
+              class="form-control"
+              id="description"
+              rows="4"
+              formControlName="description"
+              [ngClass]="{'is-invalid': courseForm.get('description')?.invalid && courseForm.get('description')?.touched}"
+            ></textarea>
+            <div class="invalid-feedback" *ngIf="courseForm.get('description')?.errors?.['required']">
+              Description is required
+            </div>
+            <div class="invalid-feedback" *ngIf="courseForm.get('description')?.errors?.['minlength']">
+              Description must be at least 10 characters long
+            </div>
+          </div>
+
+          <!-- Price -->
+          <div class="col-md-4 mb-3">
+            <label for="price" class="form-label">Price*</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input
+                type="number"
+                class="form-control"
+                id="price"
+                formControlName="price"
+                [ngClass]="{'is-invalid': courseForm.get('price')?.invalid && courseForm.get('price')?.touched}"
+              >
+            </div>
+            <div class="invalid-feedback">
+              Please enter a valid price
+            </div>
+          </div>
+
+          <!-- Duration -->
+          <div class="col-md-4 mb-3">
+            <label for="duration" class="form-label">Duration (hours)*</label>
+            <input
+              type="number"
+              class="form-control"
+              id="duration"
+              formControlName="duration"
+              [ngClass]="{'is-invalid': courseForm.get('duration')?.invalid && courseForm.get('duration')?.touched}"
+            >
+            <div class="invalid-feedback">
+              Please enter a valid duration
+            </div>
+          </div>
+
+          <!-- Course Type -->
+          <div class="col-md-4 mb-3">
+            <label for="courseType" class="form-label">Course Type*</label>
+            <select
+              class="form-select"
+              id="courseType"
+              formControlName="courseType"
+              (change)="onCourseTypeChange()"
+            >
+              <option value="Online">Online</option>
+              <option value="Offline">Offline</option>
+            </select>
+          </div>
+
+          <!-- Seats Available (Only for Offline courses) -->
+          <div class="col-md-4 mb-3" *ngIf="courseForm.get('courseType')?.value === 'Offline'">
+            <label for="seatsAvailable" class="form-label">Available Seats</label>
+            <input
+              type="number"
+              class="form-control"
+              id="seatsAvailable"
+              formControlName="seatsAvailable"
+            >
+          </div>
+
+          <!-- Start Date (Only for Offline courses) -->
+          <div class="col-md-4 mb-3" *ngIf="courseForm.get('courseType')?.value === 'Offline'">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="startDate"
+              formControlName="startDate"
+            >
+          </div>
+
+          <!-- End Date (Only for Offline courses) -->
+          <div class="col-md-4 mb-3" *ngIf="courseForm.get('courseType')?.value === 'Offline'">
+            <label for="endDate" class="form-label">End Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="endDate"
+              formControlName="endDate"
+            >
+          </div>
+
+          <!-- Thumbnail URL -->
+          <div class="col-12 mb-3">
+            <label for="thumbnail" class="form-label">Thumbnail URL</label>
+            <input
+              type="text"
+              class="form-control"
+              id="thumbnail"
+              formControlName="thumbnail"
+              placeholder="Enter image URL"
+            >
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+          <button
+            type="button"
+            class="btn btn-secondary me-md-2"
+            routerLink="/courses"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="courseForm.invalid || isSubmitting"
+          >
+            {{ isSubmitting ? 'Creating...' : 'Create Course' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

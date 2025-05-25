@@ -10,6 +10,7 @@ import { BrowseallComponent } from './components/course/browseall/browseall.comp
 import { ViewUserProfileComponent } from './components/user/view-user-profile/view-user-profile.component';
 import { EnrollmentsComponent } from './components/user/enrollments/enrollments.component';
 import { UpdateProfileComponent } from './components/user/update-profile/update-profile.component';
+import { AddCourseComponent } from './components/course/add-course/add-course.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'course/category', component: CategoryComponent },
   { path: 'course/category/:categoryId', component: CourseByCategoryComponent }, //anything after the colon is a parameter or variable
   { path: 'course/details/:courseId', component: CourseDetailsComponent },
+  { path: 'course/add', component: AddCourseComponent },
   { path: 'user/instructors', component: ViewUserProfileComponent },
   { path: 'user/update-profile', component: UpdateProfileComponent },
   { path: 'course/enrollments', component: EnrollmentsComponent },
