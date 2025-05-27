@@ -23,6 +23,7 @@ export const routes: Routes = [
   { path: 'course/category/:categoryId', component: CourseByCategoryComponent }, //anything after the colon is a parameter or variable
   { path: 'course/details/:courseId', component: CourseDetailsComponent },
   { path: 'course/add', component: AddCourseComponent },
+  { path: 'user/profile/:userId', component: ViewUserProfileComponent },
   { path: 'user/instructors', component: ViewUserProfileComponent },
   { path: 'user/update-profile', component: UpdateProfileComponent },
   { path: 'course/enrollments', component: EnrollmentsComponent },

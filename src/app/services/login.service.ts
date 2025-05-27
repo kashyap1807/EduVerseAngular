@@ -71,35 +71,51 @@ export class LoginService {
   getClaims(claims: any) {
     if (claims) {
       const claimsTable: Claim[] = createClaimsTable(claims);
+      
+      // First set the claims
       this.claimsSubject.next([...claimsTable]);
 
-      const userIdClaim = claimsTable.find(
-        (f) => f.claim === 'extension_userId'
-      );
-
-      // Type check before accessing extension_userRoles property
-      if (
-        'extension_userRoles' in claims &&
-        typeof claims.extension_userRoles === 'string'
-      ) {
+      // Handle user roles
+      if ('extension_userRoles' in claims && typeof claims.extension_userRoles === 'string') {
         this.userRoles = claims.extension_userRoles.split(',');
       } else {
         this.userRoles = [];
       }
 
-      if (userIdClaim) {
-        this.userIdSubject.next(+userIdClaim.value);
-        this.userId = +userIdClaim.value;
+      // Handle user ID and login status
+      const userIdClaim = claimsTable.find((f) => f.claim === 'extension_userId');
+      if (userIdClaim && userIdClaim.value) {
+        const parsedUserId = +userIdClaim.value;
+        if (!isNaN(parsedUserId) && parsedUserId > 0) {
+          this.userId = parsedUserId;
+          this.userIdSubject.next(parsedUserId);
+          this.isLoggedIn = true;
+        }
       }
-      this.userName =
-        claimsTable.filter((s) => s.claim === 'given_name')[0].value +
-        ', ' +
-        claimsTable.filter((s) => s.claim === 'family_name')[0].value;
+
+      // Handle user name
+      const givenName = claimsTable.find((f) => f.claim === 'given_name')?.value || '';
+      const familyName = claimsTable.find((f) => f.claim === 'family_name')?.value || '';
+      this.userName = givenName && familyName ? `${givenName}, ${familyName}` : '';
+
+      // Additional profile information is available directly in the claims
+      // and will be handled by components that need it
     } else {
-      this.userIdSubject.next(0);
-      this.claimsSubject.next([]); // No claims available
-      this.userRoles = [];
+      this.handleInvalidUserId();
     }
+  }
+
+  private handleInvalidUserId() {
+    this.userId = 0;
+    this.userIdSubject.next(0);
+    this.isLoggedIn = false;
+    this.claimsSubject.next([]);
+    this.userRoles = [];
+    this.userName = '';
+  }
+
+  isUserInitialized(): boolean {
+    return this.isLoggedIn && this.userId > 0 && this.claimsSubject.value.length > 0;
   }
 
   login(userFlowRequest?: RedirectRequest | PopupRequest) {
