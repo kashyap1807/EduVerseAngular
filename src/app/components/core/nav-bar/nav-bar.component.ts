@@ -8,11 +8,12 @@ import { LoginService } from '../../../services/login.service';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { Claim } from '../../../models/claim.model';
 import { UserProfileService } from '../../../services/user-profile.service';
+import { HasRoleDirective } from '../../../directives/has-role.directive';
 
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule, MsalModule],
+  imports: [RouterModule, CommonModule, FormsModule, MsalModule, HasRoleDirective],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css',
 })
@@ -28,42 +29,41 @@ export class NavBarComponent implements OnInit, OnDestroy {
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private authService: MsalService,
     private msalBroadcastService: MsalBroadcastService,
-    private loginService: LoginService,
+    public loginService: LoginService,
     private router: Router,
-    private userService:UserProfileService
+    private userService: UserProfileService
   ) {}
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.getUserInfo();
-    }, 2000);
-
-    this.loginService.claims$.subscribe((s) => {
-      const roles = s.filter((f) => f.claim === 'extension_userRoles');
+    // Subscribe to claims changes to get user info
+    this.loginService.claims$.subscribe((claims) => {
+      const roles = claims.filter((f) => f.claim === 'extension_userRoles');
       if (roles.length && !this.isAdmin) {
         this.isAdmin =
           roles[0].value.split(',').filter((f) => f === 'Admin').length > 0;
       }
+      
+      // Get profile picture from claims
+      const pictureClaim = claims.find(c => c.claim === 'picture');
+      this.profilePictureUrl = pictureClaim?.value || '';
     });
 
     this.authService
       .handleRedirectObservable()
       .subscribe((result: AuthenticationResult) => {
         if (result) {
-          const redirectStartPage = localStorage.getItem('redirectStartPage'); // Retrieve the URL from local storage
+          const redirectStartPage = localStorage.getItem('redirectStartPage');
           if (redirectStartPage) {
             this.router.navigate([redirectStartPage]);
-            localStorage.removeItem('redirectStartPage'); // Clear the URL from local storage
+            localStorage.removeItem('redirectStartPage');
           }
         }
       });
 
-    //this.authService.handleRedirectObservable().subscribe();
-    this.isIframe = window !== window.parent && !window.opener; // Remove this line to use Angular Universal
-
+    this.isIframe = window !== window.parent && !window.opener;
     this.setLoginDisplay();
 
-    this.authService.instance.enableAccountStorageEvents(); // Optional - This will enable ACCOUNT_ADDED and ACCOUNT_REMOVED events emitted when a user logs in or out of another tab or window
+    this.authService.instance.enableAccountStorageEvents();
     this.msalBroadcastService.msalSubject$
       .pipe(
         filter(
@@ -79,11 +79,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
           this.setLoginDisplay();
         }
       });
-
-    //To subscribe for claims
-    this.loginService.claims$.subscribe((c) => {
-      this.claims = c;
-    });
 
     this.msalBroadcastService.inProgress$
       .pipe(
@@ -116,9 +111,17 @@ export class NavBarComponent implements OnInit, OnDestroy {
   }
 
   getUserInfo() {
-    this.userService.getUserProfile(this.loginService.userId).subscribe((s) => {
-      this.profilePictureUrl = s.profilePictureUrl ? s.profilePictureUrl : '';
-    });
+    const userId = this.loginService.userId;
+    if (userId && userId > 0) {
+      this.userService.getUserProfile(userId).subscribe({
+        next: (s) => {
+          this.profilePictureUrl = s.profilePictureUrl ? s.profilePictureUrl : '';
+        },
+        error: (error) => {
+          console.error('Error fetching user profile:', error);
+        }
+      });
+    }
   }
 
   setLoginDisplay() {
