@@ -8,11 +8,12 @@ import { LoginService } from '../../../services/login.service';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { Claim } from '../../../models/claim.model';
 import { UserProfileService } from '../../../services/user-profile.service';
+import { HasRoleDirective } from '../../../directives/has-role.directive';
 
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule, MsalModule],
+  imports: [RouterModule, CommonModule, FormsModule, MsalModule, HasRoleDirective],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css',
 })

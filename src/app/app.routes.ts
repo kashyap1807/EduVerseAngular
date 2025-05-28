@@ -11,8 +11,11 @@ import { ViewUserProfileComponent } from './components/user/view-user-profile/vi
 import { EnrollmentsComponent } from './components/user/enrollments/enrollments.component';
 import { UpdateProfileComponent } from './components/user/update-profile/update-profile.component';
 import { AddCourseComponent } from './components/course/add-course/add-course.component';
+import { RoleGuard } from './guards/role.guard';
+import { MsalGuard } from '@azure/msal-angular';
 
 export const routes: Routes = [
+  // Public Routes
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'about-us', component: AboutUsComponent },
@@ -20,11 +23,37 @@ export const routes: Routes = [
   { path: 'plans-and-price', component: PlansAndPricingComponent },
   { path: 'course/browseall', component: BrowseallComponent },
   { path: 'course/category', component: CategoryComponent },
-  { path: 'course/category/:categoryId', component: CourseByCategoryComponent }, //anything after the colon is a parameter or variable
+  { path: 'course/category/:categoryId', component: CourseByCategoryComponent },
   { path: 'course/details/:courseId', component: CourseDetailsComponent },
-  { path: 'course/add', component: AddCourseComponent },
-  { path: 'user/profile/:userId', component: ViewUserProfileComponent },
-  { path: 'user/instructors', component: ViewUserProfileComponent },
-  { path: 'user/update-profile', component: UpdateProfileComponent },
-  { path: 'course/enrollments', component: EnrollmentsComponent },
+  
+  // Authenticated User Routes (requires login)
+  { 
+    path: 'user/profile/:userId', 
+    component: ViewUserProfileComponent,
+    canActivate: [MsalGuard]
+  },
+  { 
+    path: 'user/update-profile', 
+    component: UpdateProfileComponent,
+    canActivate: [MsalGuard]
+  },
+  { 
+    path: 'course/enrollments', 
+    component: EnrollmentsComponent,
+    canActivate: [MsalGuard]
+  },
+
+  // Instructor Routes
+  { 
+    path: 'course/add', 
+    component: AddCourseComponent,
+    canActivate: [MsalGuard, RoleGuard],
+    data: { roles: ['Instructor'] }
+  },
+  { 
+    path: 'user/instructors', 
+    component: ViewUserProfileComponent,
+    canActivate: [MsalGuard, RoleGuard],
+    data: { roles: ['Instructor'] }
+  },
 ];
