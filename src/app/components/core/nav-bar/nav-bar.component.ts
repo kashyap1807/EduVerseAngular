@@ -48,29 +48,40 @@ export class NavBarComponent implements OnInit, OnDestroy {
       this.profilePictureUrl = pictureClaim?.value || '';
     });
 
-    this.authService
-      .handleRedirectObservable()
-      .subscribe((result: AuthenticationResult) => {
-        if (result) {
-          const redirectStartPage = localStorage.getItem('redirectStartPage');
-          if (redirectStartPage) {
-            this.router.navigate([redirectStartPage]);
-            localStorage.removeItem('redirectStartPage');
+    // Handle initial redirect
+    this.authService.handleRedirectObservable()
+      .subscribe({
+        next: (result: AuthenticationResult) => {
+          if (result) {
+            const redirectStartPage = localStorage.getItem('redirectStartPage');
+            if (redirectStartPage) {
+              this.router.navigate([redirectStartPage]);
+              localStorage.removeItem('redirectStartPage');
+            }
           }
+        },
+        error: (error) => {
+          console.error('MSAL Redirect Error: ', error);
         }
       });
 
     this.isIframe = window !== window.parent && !window.opener;
+
+    // Check if there are any accounts as soon as possible
+    this.checkAndSetActiveAccount();
     this.setLoginDisplay();
 
     this.authService.instance.enableAccountStorageEvents();
+    
+    // Handle account changes
     this.msalBroadcastService.msalSubject$
       .pipe(
         filter(
           (msg: EventMessage) =>
             msg.eventType === EventType.ACCOUNT_ADDED ||
             msg.eventType === EventType.ACCOUNT_REMOVED
-        )
+        ),
+        takeUntil(this._destroying$)
       )
       .subscribe((result: EventMessage) => {
         if (this.authService.instance.getAllAccounts().length === 0) {
@@ -80,11 +91,10 @@ export class NavBarComponent implements OnInit, OnDestroy {
         }
       });
 
+    // Handle auth state changes
     this.msalBroadcastService.inProgress$
       .pipe(
-        filter(
-          (status: InteractionStatus) => status === InteractionStatus.None
-        ),
+        filter((status: InteractionStatus) => status === InteractionStatus.None),
         takeUntil(this._destroying$)
       )
       .subscribe(() => {
@@ -93,7 +103,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
       });
   }
 
-  checkAndSetActiveAccount() {
+  private checkAndSetActiveAccount(): void {
     /**
      * If no active account set but there are accounts signed in, sets first account to active account
      * To use active account set here, subscribe to inProgress$ first in your component
@@ -101,11 +111,9 @@ export class NavBarComponent implements OnInit, OnDestroy {
      */
     let activeAccount = this.authService.instance.getActiveAccount();
 
-    if (
-      !activeAccount &&
-      this.authService.instance.getAllAccounts().length > 0
-    ) {
+    if (!activeAccount && this.authService.instance.getAllAccounts().length > 0) {
       let accounts = this.authService.instance.getAllAccounts();
+      // Set the first account as active if there is no active account
       this.authService.instance.setActiveAccount(accounts[0]);
     }
   }

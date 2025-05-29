@@ -64,16 +64,17 @@ export function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
       clientId: environment.adb2cConfig.clientId,
-      authority: b2cPolicies.authorities.signUpSignIn.authority, //environment.msalConfig.auth.authority,
-      knownAuthorities: [b2cPolicies.authorityDomain], // Mark your B2C tenant's domain as trusted.
-      redirectUri: '/',
-      postLogoutRedirectUri: '/',
+      authority: b2cPolicies.authorities.signUpSignIn.authority,
+      knownAuthorities: [b2cPolicies.authorityDomain],
+      redirectUri: window.location.origin,
+      postLogoutRedirectUri: window.location.origin,
+      navigateToLoginRequestUrl: true
     },
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage,
+      storeAuthStateInCookie: true, // Set to true for IE 11 compatibility
     },
     system: {
-      // Removed allowNativeBroker as it is not a valid property
       loggerOptions: {
         loggerCallback,
         logLevel: LogLevel.Info,
