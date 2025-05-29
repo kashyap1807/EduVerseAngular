@@ -40,6 +40,7 @@ export class LoginService {
     private msalBroadcastService: MsalBroadcastService,
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration
   ) {
+    // Handle successful login
     this.msalBroadcastService.msalSubject$
       .pipe(
         filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS)
@@ -49,23 +50,43 @@ export class LoginService {
         this.authService.instance.setActiveAccount(payload.account);
         const claims = payload.account.idTokenClaims;
         this.getClaims(claims);
+        this.setLoginDisplay();
       });
 
+    // Handle auth state changes
     this.msalBroadcastService.inProgress$
       .pipe(
         filter((status: InteractionStatus) => status === InteractionStatus.None)
       )
       .subscribe(() => {
         this.setLoginDisplay();
-        const claims =
-          this.authService.instance.getActiveAccount()?.idTokenClaims;
-        this.getClaims(claims);
+        const activeAccount = this.authService.instance.getActiveAccount();
+        if (activeAccount) {
+          const claims = activeAccount.idTokenClaims;
+          this.getClaims(claims);
+        } else {
+          // Try to set active account if there are any accounts
+          const accounts = this.authService.instance.getAllAccounts();
+          if (accounts.length > 0) {
+            this.authService.instance.setActiveAccount(accounts[0]);
+            const claims = accounts[0].idTokenClaims;
+            this.getClaims(claims);
+          } else {
+            this.handleInvalidUserId();
+          }
+        }
       });
   }
 
   setLoginDisplay() {
-    this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
+    const accounts = this.authService.instance.getAllAccounts();
+    this.loginDisplay = accounts.length > 0;
     this.isLoggedIn = this.loginDisplay;
+    
+    // Ensure we have an active account if there are any accounts
+    if (this.loginDisplay && !this.authService.instance.getActiveAccount()) {
+      this.authService.instance.setActiveAccount(accounts[0]);
+    }
   }
 
   getClaims(claims: any) {
