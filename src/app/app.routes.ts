@@ -13,6 +13,9 @@ import { UpdateProfileComponent } from './components/user/update-profile/update-
 import { AddCourseComponent } from './components/course/add-course/add-course.component';
 import { RoleGuard } from './guards/role.guard';
 import { MsalGuard } from '@azure/msal-angular';
+import { FormComponent } from './components/video-request/form/form.component';
+import { RequestComponent } from './components/video-request/request/request.component';
+import { ListComponent } from './components/video-request/list/list.component';
 
 export const routes: Routes = [
   // Public Routes
@@ -25,35 +28,57 @@ export const routes: Routes = [
   { path: 'course/category', component: CategoryComponent },
   { path: 'course/category/:categoryId', component: CourseByCategoryComponent },
   { path: 'course/details/:courseId', component: CourseDetailsComponent },
-  
+
   // Authenticated User Routes (requires login)
-  { 
-    path: 'user/profile/:userId', 
+  {
+    path: 'user/profile/:userId',
     component: ViewUserProfileComponent,
-    canActivate: [MsalGuard]
+    canActivate: [MsalGuard],
   },
-  { 
-    path: 'user/update-profile', 
+  {
+    path: 'user/update-profile',
     component: UpdateProfileComponent,
-    canActivate: [MsalGuard]
+    canActivate: [MsalGuard],
   },
-  { 
-    path: 'course/enrollments', 
+  {
+    path: 'course/enrollments',
     component: EnrollmentsComponent,
-    canActivate: [MsalGuard]
+    canActivate: [MsalGuard],
   },
 
   // Instructor Routes
-  { 
-    path: 'course/add', 
+  {
+    path: 'course/add',
     component: AddCourseComponent,
     canActivate: [MsalGuard, RoleGuard],
-    data: { roles: ['Instructor'] }
+    data: { roles: ['Instructor'] },
   },
-  { 
-    path: 'user/instructors', 
+  {
+    path: 'user/instructors',
     component: ViewUserProfileComponent,
     canActivate: [MsalGuard, RoleGuard],
-    data: { roles: ['Instructor'] }
+    data: { roles: ['Instructor'] },
+  },
+
+  {
+    path: 'technology/request/video',
+    component: FormComponent,
+    // canActivate: [canActivateGuard],
+    // canDeactivate: [canDeactivateGuard],
+  },
+  {
+    path: 'technology/requests',
+    component: RequestComponent,
+    //canActivate: [canActivateGuard],
+  },
+  {
+    path: 'admin/technology/requests',
+    component: ListComponent,
+    //canActivate: [canActivateAdminGuard],
+  },
+  {
+    path: 'admin/technology/requests/edit/:id',
+    component: FormComponent,
+    //canActivate: [canActivateAdminGuard],
   },
 ];
