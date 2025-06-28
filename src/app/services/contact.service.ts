@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ContactService {
-  private baseUrl = `${environment.apiUrl}/contact`;
+  private baseUrl = `${environment.apiUrl}/Contact`;
   constructor(private http: HttpClient) {}
 
   sendMessage(contactData: any): Observable<any> {
