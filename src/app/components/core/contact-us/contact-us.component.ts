@@ -5,6 +5,8 @@ import { RouterModule } from '@angular/router';
 import { ContactService } from '../../../services/contact.service';
 import { ToastrService } from 'ngx-toastr';
 import { BrowserModule } from '@angular/platform-browser';
+import { LoginService } from '../../../services/login.service';
+import { UserProfileService } from '../../../services/user-profile.service';
 
 @Component({
   selector: 'app-contact-us',
@@ -20,8 +22,8 @@ export class ContactUsComponent implements OnInit {
     private fb: FormBuilder,
     private contactService: ContactService,
     private toastrService: ToastrService,
-    // private loginService: LoginService,
-    // private userService: UserProfileService
+    private loginService: LoginService,
+    private userService: UserProfileService
   ) {
     this.contactForm = this.fb.group({
       name: ['', Validators.required],
@@ -33,7 +35,7 @@ export class ContactUsComponent implements OnInit {
 
   ngOnInit(): void {
     this.triggerError();
-    // this.userId = this.loginService.userId;
+    this.userId = this.loginService.userId;
   }
 
   triggerError() {

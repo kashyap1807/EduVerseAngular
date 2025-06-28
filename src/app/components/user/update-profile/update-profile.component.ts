@@ -26,7 +26,12 @@ export class UpdateProfileComponent implements OnInit {
     private userProfileService: UserProfileService,
     private toasterService: ToastrService,
     private router: Router
-  ) {}
+  ) {
+    // Initialize form with bio control, conditionally required
+    this.profileForm = this.fb.group({
+      bio: [{ value: '', disabled: true }],
+    });
+  }
 
   ngOnInit(): void {
     if (!this.loginService.isLoggedIn) {
