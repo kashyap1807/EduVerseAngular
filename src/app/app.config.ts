@@ -32,6 +32,9 @@ import { environment } from '../environments/environment';
 import { SafePipe } from './pipes/safe.pipe';
 import { GlobalErrorInterceptor } from './components/core/error-handling/global-error-handling.interceptor';
 import { GlobalErrorHandler } from './components/core/error-handling/global-error-handling.service';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
+import { RatingModule } from 'ngx-bootstrap/rating';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 export const b2cPolicies = {
   names: {
@@ -64,17 +67,16 @@ export function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
       clientId: environment.adb2cConfig.clientId,
-      authority: b2cPolicies.authorities.signUpSignIn.authority,
-      knownAuthorities: [b2cPolicies.authorityDomain],
-      redirectUri: window.location.origin,
-      postLogoutRedirectUri: window.location.origin,
-      navigateToLoginRequestUrl: true
+      authority: b2cPolicies.authorities.signUpSignIn.authority, //environment.msalConfig.auth.authority,
+      knownAuthorities: [b2cPolicies.authorityDomain], // Mark your B2C tenant's domain as trusted.
+      redirectUri: '/',
+      postLogoutRedirectUri: '/',
     },
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage,
-      storeAuthStateInCookie: true, // Set to true for IE 11 compatibility
     },
     system: {
+      // allowNativeBroker: false, // Disables WAM Broker
       loggerOptions: {
         loggerCallback,
         logLevel: LogLevel.Info,
@@ -91,10 +93,10 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
     Array<string | ProtectedResourceScopes> | null
   >();
   //have this set if more microservice used or requires different scope for different controllers
-  protectedResourceMap.set(
-    environment.adb2cConfig.apiEndpointUrl, // This is for all controllers
-    environment.adb2cConfig.scopeUrls
-  );
+  // protectedResourceMap.set(
+  //   environment.adb2cConfig.apiEndpointUrl, // This is for all controllers
+  //   environment.adb2cConfig.scopeUrls
+  // );
 
   protectedResourceMap.set(environment.adb2cConfig.apiEndpointUrl, [
     // {
@@ -119,63 +121,64 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
     },
   ]);
 
-  // protectedResourceMap.set(
-  //   `${environment.adb2cConfig.apiEndpointUrl}/videorequest`,
-  //   [
-  //     {
-  //       httpMethod: 'GET',
-  //       scopes: [...environment.adb2cConfig.scopeUrls],
-  //     },
-  //     {
-  //       httpMethod: 'POST',
-  //       scopes: [...environment.adb2cConfig.scopeUrls],
-  //     },
-  //     {
-  //       httpMethod: 'PUT',
-  //       scopes: [...environment.adb2cConfig.scopeUrls],
-  //     },
-  //     {
-  //       httpMethod: 'DELETE',
-  //       scopes: [...environment.adb2cConfig.scopeUrls],
-  //     },
-  //     {
-  //       httpMethod: 'PATCH',
-  //       scopes: [...environment.adb2cConfig.scopeUrls],
-  //     },
-  //   ]
-  // );
+  protectedResourceMap.set(
+    `${environment.adb2cConfig.apiEndpointUrl}/videorequest`,
+    [
+      {
+        httpMethod: 'GET',
+        scopes: [...environment.adb2cConfig.scopeUrls],
+      },
+      {
+        httpMethod: 'POST',
+        scopes: [...environment.adb2cConfig.scopeUrls],
+      },
+      {
+        httpMethod: 'PUT',
+        scopes: [...environment.adb2cConfig.scopeUrls],
+      },
+      {
+        httpMethod: 'DELETE',
+        scopes: [...environment.adb2cConfig.scopeUrls],
+      },
+      {
+        httpMethod: 'PATCH',
+        scopes: [...environment.adb2cConfig.scopeUrls],
+      },
+    ]
+  );
 
-  // protectedResourceMap.set(
-  //   `${environment.adb2cConfig.apiEndpointUrl}/enrollment`,
-  //   [
-  //     {
-  //       httpMethod: 'GET',
-  //       scopes: [...environment.adb2cConfig.scopeUrls],
-  //     },
-  //     {
-  //       httpMethod: 'POST',
-  //       scopes: [...environment.adb2cConfig.scopeUrls],
-  //     },
-  //     {
-  //       httpMethod: 'PUT',
-  //       scopes: [...environment.adb2cConfig.scopeUrls],
-  //     },
-  //     {
-  //       httpMethod: 'DELETE',
-  //       scopes: [...environment.adb2cConfig.scopeUrls],
-  //     },
-  //     {
-  //       httpMethod: 'PATCH',
-  //       scopes: [...environment.adb2cConfig.scopeUrls],
-  //     },
-  //   ]
-  // );
+  protectedResourceMap.set(
+    `${environment.adb2cConfig.apiEndpointUrl}/enrollment`,
+    [
+      {
+        httpMethod: 'GET',
+        scopes: [...environment.adb2cConfig.scopeUrls],
+      },
+      {
+        httpMethod: 'POST',
+        scopes: [...environment.adb2cConfig.scopeUrls],
+      },
+      {
+        httpMethod: 'PUT',
+        scopes: [...environment.adb2cConfig.scopeUrls],
+      },
+      {
+        httpMethod: 'DELETE',
+        scopes: [...environment.adb2cConfig.scopeUrls],
+      },
+      {
+        httpMethod: 'PATCH',
+        scopes: [...environment.adb2cConfig.scopeUrls],
+      },
+    ]
+  );
 
   return {
     interactionType: InteractionType.Redirect,
     protectedResourceMap,
   };
 }
+
 export function MSALGuardConfigFactory(): MsalGuardConfiguration {
   return {
     interactionType: InteractionType.Redirect,
@@ -190,20 +193,23 @@ export const appConfig: ApplicationConfig = {
   providers: [
     importProvidersFrom(
       CarouselModule.forRoot(),
+      AccordionModule.forRoot(),
+      RatingModule.forRoot(),
+      ModalModule.forRoot(),
+      PopoverModule.forRoot(),
+      SafePipe,
       BrowserModule,
       BrowserAnimationsModule,
-      SafePipe,
-      NgxSpinnerModule.forRoot({ type: 'ball-scale-multiple' }),
-      PopoverModule.forRoot(),
       ToastrModule.forRoot({
         timeOut: 3000,
         positionClass: 'toast-top-right',
         preventDuplicates: true,
-      })
+      }),
+      NgxSpinnerModule.forRoot({ type: 'ball-scale-multiple' })
     ),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideRouter(routes),
+
     provideHttpClient(withInterceptorsFromDi()),
     {
       provide: HTTP_INTERCEPTORS,

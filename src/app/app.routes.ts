@@ -16,6 +16,9 @@ import { MsalGuard } from '@azure/msal-angular';
 import { FormComponent } from './components/video-request/form/form.component';
 import { RequestComponent } from './components/video-request/request/request.component';
 import { ListComponent } from './components/video-request/list/list.component';
+import { ViewClaimsComponent } from './components/view-claims/view-claims.component';
+import { canActivateGuard } from './components/guards/login.guard';
+import { canDeactivateGuard } from './components/guards/can-deactivate.guard';
 
 export const routes: Routes = [
   // Public Routes
@@ -60,11 +63,12 @@ export const routes: Routes = [
     data: { roles: ['Instructor'] },
   },
 
+  { path: 'claims', component: ViewClaimsComponent },
   {
     path: 'technology/request/video',
     component: FormComponent,
-    // canActivate: [canActivateGuard],
-    // canDeactivate: [canDeactivateGuard],
+    canActivate: [canActivateGuard],
+    canDeactivate: [canDeactivateGuard],
   },
   {
     path: 'technology/requests',
