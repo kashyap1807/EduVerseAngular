@@ -40,7 +40,6 @@ export class LoginService {
     private msalBroadcastService: MsalBroadcastService,
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration
   ) {
-    // Handle successful login
     this.msalBroadcastService.msalSubject$
       .pipe(
         filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS)
@@ -50,93 +49,57 @@ export class LoginService {
         this.authService.instance.setActiveAccount(payload.account);
         const claims = payload.account.idTokenClaims;
         this.getClaims(claims);
-        this.setLoginDisplay();
       });
 
-    // Handle auth state changes
     this.msalBroadcastService.inProgress$
       .pipe(
         filter((status: InteractionStatus) => status === InteractionStatus.None)
       )
       .subscribe(() => {
         this.setLoginDisplay();
-        const activeAccount = this.authService.instance.getActiveAccount();
-        if (activeAccount) {
-          const claims = activeAccount.idTokenClaims;
-          this.getClaims(claims);
-        } else {
-          // Try to set active account if there are any accounts
-          const accounts = this.authService.instance.getAllAccounts();
-          if (accounts.length > 0) {
-            this.authService.instance.setActiveAccount(accounts[0]);
-            const claims = accounts[0].idTokenClaims;
-            this.getClaims(claims);
-          } else {
-            this.handleInvalidUserId();
-          }
-        }
+        const claims =
+          this.authService.instance.getActiveAccount()?.idTokenClaims;
+        this.getClaims(claims);
       });
   }
 
   setLoginDisplay() {
-    const accounts = this.authService.instance.getAllAccounts();
-    this.loginDisplay = accounts.length > 0;
+    this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
     this.isLoggedIn = this.loginDisplay;
-    
-    // Ensure we have an active account if there are any accounts
-    if (this.loginDisplay && !this.authService.instance.getActiveAccount()) {
-      this.authService.instance.setActiveAccount(accounts[0]);
-    }
   }
 
   getClaims(claims: any) {
     if (claims) {
       const claimsTable: Claim[] = createClaimsTable(claims);
-      
-      // First set the claims
       this.claimsSubject.next([...claimsTable]);
 
-      // Handle user roles
-      if ('extension_userRoles' in claims && typeof claims.extension_userRoles === 'string') {
+      const userIdClaim = claimsTable.find(
+        (f) => f.claim === 'extension_userId'
+      );
+
+      // Type check before accessing extension_userRoles property
+      if (
+        'extension_userRoles' in claims &&
+        typeof claims.extension_userRoles === 'string'
+      ) {
         this.userRoles = claims.extension_userRoles.split(',');
       } else {
         this.userRoles = [];
       }
 
-      // Handle user ID and login status
-      const userIdClaim = claimsTable.find((f) => f.claim === 'extension_userId');
-      if (userIdClaim && userIdClaim.value) {
-        const parsedUserId = +userIdClaim.value;
-        if (!isNaN(parsedUserId) && parsedUserId > 0) {
-          this.userId = parsedUserId;
-          this.userIdSubject.next(parsedUserId);
-          this.isLoggedIn = true;
-        }
+      if (userIdClaim) {
+        this.userIdSubject.next(+userIdClaim.value);
+        this.userId = +userIdClaim.value;
       }
-
-      // Handle user name
-      const givenName = claimsTable.find((f) => f.claim === 'given_name')?.value || '';
-      const familyName = claimsTable.find((f) => f.claim === 'family_name')?.value || '';
-      this.userName = givenName && familyName ? `${givenName}, ${familyName}` : '';
-
-      // Additional profile information is available directly in the claims
-      // and will be handled by components that need it
+      this.userName =
+        claimsTable.filter((s) => s.claim === 'given_name')[0].value +
+        ', ' +
+        claimsTable.filter((s) => s.claim === 'family_name')[0].value;
     } else {
-      this.handleInvalidUserId();
+      this.userIdSubject.next(0);
+      this.claimsSubject.next([]); // No claims available
+      this.userRoles = [];
     }
-  }
-
-  private handleInvalidUserId() {
-    this.userId = 0;
-    this.userIdSubject.next(0);
-    this.isLoggedIn = false;
-    this.claimsSubject.next([]);
-    this.userRoles = [];
-    this.userName = '';
-  }
-
-  isUserInitialized(): boolean {
-    return this.isLoggedIn && this.userId > 0 && this.claimsSubject.value.length > 0;
   }
 
   login(userFlowRequest?: RedirectRequest | PopupRequest) {
