@@ -34,14 +34,14 @@ export class ContactUsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.triggerError();
+    // this.triggerError();
     this.userId = this.loginService.userId;
   }
 
-  triggerError() {
-    // Simulate a non-HTTP error
-    throw new Error('This is a simulated error');
-  }
+  // triggerError() {
+  //   // Simulate a non-HTTP error
+  //   throw new Error('This is a simulated error');
+  // }
 
   onSubmit() {
     if (this.contactForm.valid) {
