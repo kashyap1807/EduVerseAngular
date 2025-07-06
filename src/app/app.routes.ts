@@ -19,6 +19,8 @@ import { ListComponent } from './components/video-request/list/list.component';
 import { ViewClaimsComponent } from './components/view-claims/view-claims.component';
 import { canActivateGuard } from './components/guards/login.guard';
 import { canDeactivateGuard } from './components/guards/can-deactivate.guard';
+import { CourseComponent } from './components/course/course/course.component';
+import { CourseListComponent } from './components/course/course-list/course-list.component';
 
 export const routes: Routes = [
   // Public Routes
@@ -31,6 +33,18 @@ export const routes: Routes = [
   { path: 'course/category', component: CategoryComponent },
   { path: 'course/category/:categoryId', component: CourseByCategoryComponent },
   { path: 'course/details/:courseId', component: CourseDetailsComponent },
+
+  {
+    path: 'course/create',
+    component: CourseComponent,
+    //canActivate: [canActivateAdminGuard],
+  },
+  { path: 'course/list', component: CourseListComponent },
+  {
+    path: 'course/edit/:courseId',
+    component: CourseComponent,
+    //canActivate: [canActivateAdminGuard],
+  },
 
   // Authenticated User Routes (requires login)
   {
@@ -50,18 +64,18 @@ export const routes: Routes = [
   },
 
   // Instructor Routes
-  {
-    path: 'course/add',
-    component: AddCourseComponent,
-    canActivate: [MsalGuard, RoleGuard],
-    data: { roles: ['Instructor'] },
-  },
-  {
-    path: 'user/instructors',
-    component: ViewUserProfileComponent,
-    canActivate: [MsalGuard, RoleGuard],
-    data: { roles: ['Instructor'] },
-  },
+  // {
+  //   path: 'course/add',
+  //   component: AddCourseComponent,
+  //   canActivate: [MsalGuard, RoleGuard],
+  //   data: { roles: ['Instructor'] },
+  // },
+  // {
+  //   path: 'user/instructors',
+  //   component: ViewUserProfileComponent,
+  //   canActivate: [MsalGuard, RoleGuard],
+  //   data: { roles: ['Instructor'] },
+  // },
 
   { path: 'claims', component: ViewClaimsComponent },
   {
@@ -85,4 +99,8 @@ export const routes: Routes = [
     component: FormComponent,
     //canActivate: [canActivateAdminGuard],
   },
+
+  { path: 'course/enrollments', component: EnrollmentsComponent },
+  { path: 'user/update-profile', component: UpdateProfileComponent },
+  { path: 'user/instructors', component: ViewUserProfileComponent },
 ];
