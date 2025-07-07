@@ -20,8 +20,7 @@ export class CategoryComponent {
     this.getCategories();
   }
 
-  getCategories() {
-    debugger
+  getCategories() {    
     this.categoryService.getCategories().subscribe(data => {
       this.categories = data;
     });

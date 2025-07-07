@@ -100,7 +100,7 @@ export const routes: Routes = [
     //canActivate: [canActivateAdminGuard],
   },
 
-  { path: 'course/enrollments', component: EnrollmentsComponent },
-  { path: 'user/update-profile', component: UpdateProfileComponent },
-  { path: 'user/instructors', component: ViewUserProfileComponent },
+  // { path: 'course/enrollments', component: EnrollmentsComponent },
+  // { path: 'user/update-profile', component: UpdateProfileComponent },
+  // { path: 'user/instructors', component: ViewUserProfileComponent },
 ];
