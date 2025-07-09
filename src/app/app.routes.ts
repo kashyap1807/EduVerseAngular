@@ -21,6 +21,7 @@ import { canActivateGuard } from './components/guards/login.guard';
 import { canDeactivateGuard } from './components/guards/can-deactivate.guard';
 import { CourseComponent } from './components/course/course/course.component';
 import { CourseListComponent } from './components/course/course-list/course-list.component';
+import { canActivateAdminGuard } from './components/guards/admin.guard';
 
 export const routes: Routes = [
   // Public Routes
@@ -37,13 +38,13 @@ export const routes: Routes = [
   {
     path: 'course/create',
     component: CourseComponent,
-    //canActivate: [canActivateAdminGuard],
+    canActivate: [canActivateAdminGuard],
   },
   { path: 'course/list', component: CourseListComponent },
   {
     path: 'course/edit/:courseId',
     component: CourseComponent,
-    //canActivate: [canActivateAdminGuard],
+    canActivate: [canActivateAdminGuard],
   },
 
   // Authenticated User Routes (requires login)
@@ -87,17 +88,17 @@ export const routes: Routes = [
   {
     path: 'technology/requests',
     component: RequestComponent,
-    //canActivate: [canActivateGuard],
+    canActivate: [canActivateGuard],
   },
   {
     path: 'admin/technology/requests',
     component: ListComponent,
-    //canActivate: [canActivateAdminGuard],
+    canActivate: [canActivateAdminGuard],
   },
   {
     path: 'admin/technology/requests/edit/:id',
     component: FormComponent,
-    //canActivate: [canActivateAdminGuard],
+    canActivate: [canActivateAdminGuard],
   },
 
   // { path: 'course/enrollments', component: EnrollmentsComponent },
