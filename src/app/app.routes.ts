@@ -10,7 +10,6 @@ import { BrowseallComponent } from './components/course/browseall/browseall.comp
 import { ViewUserProfileComponent } from './components/user/view-user-profile/view-user-profile.component';
 import { EnrollmentsComponent } from './components/user/enrollments/enrollments.component';
 import { UpdateProfileComponent } from './components/user/update-profile/update-profile.component';
-import { AddCourseComponent } from './components/course/add-course/add-course.component';
 import { RoleGuard } from './guards/role.guard';
 import { MsalGuard } from '@azure/msal-angular';
 import { FormComponent } from './components/video-request/form/form.component';
