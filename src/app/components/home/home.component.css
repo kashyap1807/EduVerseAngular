@@ -75,3 +75,9 @@ h5 {
     color: #007bff;
     margin: 0;
 }
+
+.carousel img {
+  height: 500px; /* Adjust this to the desired fixed height */
+  width: 100%;
+  object-fit: cover;
+}

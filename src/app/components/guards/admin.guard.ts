@@ -26,7 +26,7 @@ export const canActivateAdminGuard: CanActivateFn = (
     authService.isLoggedIn &&
     authService.userRoles.filter((f) => f === 'Admin').length === 0
   ) {
-    toastrService.error(
+    toastrService.warning(
       'You do not have access to Admin Module',
       'Access Denied'
     );
