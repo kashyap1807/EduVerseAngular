@@ -1,6 +1,6 @@
 import { CourseDetail } from './../../../models/courseDetail.model';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CourseService } from '../../../services/course.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,8 +11,7 @@ import { ReviewService } from '../../../services/review.service';
 import { UserProfileService } from '../../../services/user-profile.service';
 import { ToastrService } from 'ngx-toastr';
 import { UserModel } from '../../../models/user.model';
-import { Payment } from '../../../models/payment.model';
-import { Enrollment } from '../../../models/enrollment.mode';
+import { CoursePaymentDto, Enrollment } from '../../../models/enrollment.mode';
 import { Review } from '../../../models/review.model';
 import { RatingComponent, RatingModule } from 'ngx-bootstrap/rating';
 import { ReviewFormComponent } from '../review-form/review-form.component';
@@ -40,7 +39,8 @@ export class CourseDetailsComponent implements OnInit {
     private enrollmentService: EnrollmentService,
     private reviewService: ReviewService,
     private userService: UserProfileService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private router: Router
   ) {}
   ngOnInit(): void {
     this.courseDetails = this.route.snapshot.data['courseDetails'];
@@ -108,7 +108,7 @@ export class CourseDetailsComponent implements OnInit {
   enroll(): void {
     if (!this.isLoggedIn || !this.courseDetails) return;
 
-    const paymentModel: Payment[] = [
+    const coursePaymentDto: CoursePaymentDto[] = [
       {
         paymentId: 0,
         enrollmentId: 0,
@@ -122,10 +122,11 @@ export class CourseDetailsComponent implements OnInit {
     const enrollmentModel: Enrollment = {
       enrollmentId: 0,
       courseId: this.courseId,
+      courseTitle: this.courseDetails.title,
       userId: this.loginService.userId,
       enrollmentDate: new Date(),
       paymentStatus: 'Pending',
-      Payment: {
+      coursePaymentDto: {
         paymentId: 0,
         enrollmentId: 0,
         amount: 0,
@@ -137,7 +138,7 @@ export class CourseDetailsComponent implements OnInit {
 
     this.enrollmentService.enrollCourse(enrollmentModel).subscribe({
       next: (response) => {
-        this.toastr.success('Enrollment successful!');
+        this.toastr.success('Enrollment successful!');        
       },
       error: (error) => {
         if (error.status === 400) {

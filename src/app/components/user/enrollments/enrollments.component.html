@@ -27,8 +27,8 @@
               'badge-danger': enrollment.paymentStatus === 'Failed'
             }" class="badge">{{ enrollment.paymentStatus }}</span>
           </td>
-          <td>{{ enrollment.Payment.paymentMethod }}</td>
-          <td>{{ enrollment.Payment.amount | currency }}</td>
+          <td>{{ enrollment.coursePaymentDto.paymentMethod }}</td>
+          <td>{{ enrollment.coursePaymentDto.amount | currency }}</td>
           <td class="text-center">
             <button class="btn btn-primary btn-sm" (click)="viewCourseDetails(enrollment.courseId)">
               View
