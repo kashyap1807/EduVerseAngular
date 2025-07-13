@@ -40,7 +40,11 @@ export const routes: Routes = [
     component: CourseComponent,
     canActivate: [canActivateAdminGuard],
   },
-  { path: 'course/list', component: CourseListComponent },
+  {
+    path: 'course/list',
+    component: CourseListComponent,
+    canActivate: [canActivateAdminGuard],
+  },
   {
     path: 'course/edit/:courseId',
     component: CourseComponent,
