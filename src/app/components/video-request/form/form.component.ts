@@ -37,8 +37,8 @@ export class FormComponent implements OnInit {
     this.userId = this.loginService.userId;
     this.requestForm = this.fb.group({
       videoRequestId: [0],
-      name: [{ value: this.loginService.userName, disabled: true }],
       userId: [this.userId],
+      userName: [{ value: this.loginService.userName, disabled: true }],
       topic: ['', Validators.required],
       subTopic: ['', Validators.required],
       requestStatus: [{ value: 'Requested', disabled: true }],

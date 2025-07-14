@@ -10,10 +10,10 @@
           <div class="row">
             <!-- Name Input -->
             <div class="col-md-6 mb-3">
-              <label for="name" class="form-label">Name</label>
-              <input type="text" id="name" class="form-control" formControlName="name" placeholder="Enter your name"
-                [ngClass]="{ 'is-invalid': requestForm.get('name')?.invalid && requestForm.get('name')?.touched }" />
-              <div *ngIf="requestForm.get('name')?.invalid && requestForm.get('name')?.touched" class="invalid-feedback">
+              <label for="userName" class="form-label">Name</label>
+              <input type="text" id="userName" class="form-control" formControlName="userName" placeholder="Enter your name"
+                [ngClass]="{ 'is-invalid': requestForm.get('userName')?.invalid && requestForm.get('userName')?.touched }" />
+              <div *ngIf="requestForm.get('userName')?.invalid && requestForm.get('userName')?.touched" class="invalid-feedback">
                 Name is required.
               </div>
             </div>
