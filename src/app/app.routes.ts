@@ -81,7 +81,11 @@ export const routes: Routes = [
   //   data: { roles: ['Instructor'] },
   // },
 
-  { path: 'claims', component: ViewClaimsComponent },
+  {
+    path: 'claims',
+    component: ViewClaimsComponent,
+    canActivate: [canActivateAdminGuard],
+  },
   {
     path: 'technology/request/video',
     component: FormComponent,
