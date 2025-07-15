@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { LoginService } from '../../../services/login.service';
 import { Subject, takeUntil } from 'rxjs';
 import { Claim } from '../../../models/claim.model';
+import { UserProfileService } from '../../../services/user-profile.service';
 
 @Component({
   selector: 'app-view-user-profile',
@@ -14,11 +15,10 @@ import { Claim } from '../../../models/claim.model';
   templateUrl: './view-user-profile.component.html',
   styleUrl: './view-user-profile.component.css',
 })
-export class ViewUserProfileComponent implements OnInit, OnDestroy {
+export class ViewUserProfileComponent implements OnInit {
   @Input() userId?: number;
-  private destroy$ = new Subject<void>();
-  claims: Claim[] = [];
-  
+  // @Input() userId = 25;
+
   user: UserModel = {
     userId: 0,
     displayName: '',
@@ -30,42 +30,23 @@ export class ViewUserProfileComponent implements OnInit, OnDestroy {
     bio: '',
   };
 
-  constructor(
-    private loginService: LoginService,
-    private route: ActivatedRoute
-  ) {}
+  constructor(private userService: UserProfileService, private loginService: LoginService) {}
 
   ngOnInit(): void {
-    // Subscribe to claims changes
-    this.loginService.claims$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(claims => {
-        this.claims = claims;
-        this.updateUserFromClaims();
-      });
+    this.userId = this.loginService.userId;
+    this.getUserProfile();
   }
 
-  private updateUserFromClaims() {
-    if (this.claims.length > 0) {
-      // Map B2C claims to user model
-      const findClaimValue = (claimType: string) => 
-        this.claims.find(c => c.claim === claimType)?.value || '';
-
-      this.user = {
-        userId: +findClaimValue('extension_userId'),
-        displayName: findClaimValue('displayName'),
-        firstName: findClaimValue('given_name'),
-        lastName: findClaimValue('family_name'),
-        email: findClaimValue('emails'),
-        adObjId: findClaimValue('oid'),
-        profilePictureUrl: findClaimValue('picture') || '../../../../assets/images/defavatar.jpg',
-        bio: findClaimValue('extension_bio') || 'No bio available'
-      };
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  getUserProfile() {
+    // Fetch user data, for now using static values for demo
+    this.userService.getUserProfile(this.loginService.userId).subscribe({
+      next: (data) => {
+        this.user = data;
+        this.user.bio = this.user.bio?.replace(/\n/g, '<br>');
+      },
+      error: (err) => {
+        console.error('Error fetching user profile', err);
+      },
+    });
   }
 }
