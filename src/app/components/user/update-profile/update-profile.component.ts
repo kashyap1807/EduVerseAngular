@@ -42,12 +42,12 @@ export class UpdateProfileComponent implements OnInit {
     this.isInstructor =
       this.loginService.userRoles.filter((f) => f == 'Instructor').length > 0;
 
-    if (this.isInstructor) {
+    // if (this.isInstructor) {
       this.profileForm.get('bio')?.enable(); // Enable bio if instructor
-    } else {
-      this.profileForm.get('bio')?.clearValidators(); // Clear bio validators if not instructor
-      this.profileForm.get('bio')?.updateValueAndValidity();
-    }
+    // } else {
+    //   this.profileForm.get('bio')?.clearValidators(); // Clear bio validators if not instructor
+    //   this.profileForm.get('bio')?.updateValueAndValidity();
+    // }
 
     // Fetch user profile data on component load
     this.userProfileService.getUserProfile(this.userProfileId).subscribe(

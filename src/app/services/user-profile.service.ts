@@ -9,14 +9,13 @@ import { UserModel } from '../models/user.model';
 })
 export class UserProfileService {
   private baseUrl = `${environment.apiUrl}/UserProfile`;
-  constructor(private httpClient: HttpClient) { }
-  
-  getUserProfile(userId: number): Observable<UserModel> {
-    return this.httpClient.get<UserModel>(`${this.baseUrl}/${userId}`);
+  constructor(private httpClient: HttpClient) {}
+
+  getUserProfile(id: number): Observable<UserModel> {
+    return this.httpClient.get<UserModel>(`${this.baseUrl}/${id}`);
   }
 
   updateUserProfile(formData: FormData) {
     return this.httpClient.post(`${this.baseUrl}/updateProfile`, formData);
   }
-
 }
