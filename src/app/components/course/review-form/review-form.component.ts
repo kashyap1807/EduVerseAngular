@@ -33,7 +33,7 @@ export class ReviewFormComponent implements OnInit {
     this.isLoggedIn = this.loginService.isLoggedIn;
     this.reviewForm = this.fb.group({
       rating: [5, Validators.required],
-      comments: ['', [Validators.required, Validators.minLength(10)]],
+      comments: ['', [Validators.required, Validators.minLength(3)]],
     });
   }
 
