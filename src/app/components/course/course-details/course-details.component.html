@@ -105,15 +105,15 @@
           <div *ngIf="courseDetails.reviews && courseDetails.reviews.length > 0; else noReviews">
             <div *ngFor="let review of courseDetails.reviews" class="review-item mb-4 p-3 border-bottom shadow-sm">
               <div class="d-flex align-items-center justify-content-between mb-2">
-                <h4 class="m-0"><small>User: </small>{{ review.userName }}</h4>
+                <h4 class="m-0">{{ review.userName }}</h4>
 
                 <!-- Static Rating with custom template -->
                 <rating [ngModel]="review.rating" [max]="5" [customTemplate]="starTemplate"
-                  style="font-size: 24px; color: #0275d8;"></rating>
+                  style="font-size: 24px; color: #0275d8;" [readonly]="true"></rating>
               </div>
 
               <div class="review-rating-info d-flex align-items-center">
-                <p class="m-0"><strong>Rating:</strong> {{ review.rating }} / 5</p>
+                <p class="m-0"><strong>Rated:</strong> {{ review.rating }} / 5</p>
               </div>
 
               <div class="review-comment mt-2">
