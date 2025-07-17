@@ -38,6 +38,6 @@ export class CourseService {
   }
 
   getInstructorInfo(): Observable<Instructor[]> {
-    return this.http.get<Instructor[]>(`${this.baseUrl}/Instructors}`);
+    return this.http.get<Instructor[]>(`${this.baseUrl}/Instructors`);
   }
 }

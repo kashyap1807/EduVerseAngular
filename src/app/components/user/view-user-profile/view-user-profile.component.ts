@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { UserModel } from '../../../models/user.model';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LoginService } from '../../../services/login.service';
@@ -11,7 +11,7 @@ import { UserProfileService } from '../../../services/user-profile.service';
 @Component({
   selector: 'app-view-user-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,RouterModule],
   templateUrl: './view-user-profile.component.html',
   styleUrl: './view-user-profile.component.css',
 })
@@ -30,7 +30,7 @@ export class ViewUserProfileComponent implements OnInit {
     bio: '',
   };
 
-  constructor(private userService: UserProfileService, private loginService: LoginService) {}
+  constructor(private userService: UserProfileService, private loginService: LoginService,private router: Router) {}
 
   ngOnInit(): void {
     this.userId = this.loginService.userId;
