@@ -40,4 +40,8 @@ export class CourseService {
   getInstructorInfo(): Observable<Instructor[]> {
     return this.http.get<Instructor[]>(`${this.baseUrl}/Instructors`);
   }
+
+  uploadThumbnail(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/upload-thumbnail`, formData);
+  }
 }
