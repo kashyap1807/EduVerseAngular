@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-course-list',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './course-list.component.html',
   styleUrl: './course-list.component.css',
 })
@@ -28,7 +28,9 @@ export class CourseListComponent implements OnInit {
     private toastrService: ToastrService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getAllCourses();
+  }
 
   getAllCourses() {
     this.courseService.getAllCourses().subscribe({
@@ -80,6 +82,25 @@ export class CourseListComponent implements OnInit {
         this.previewUrl = reader.result;
       };
       reader.readAsDataURL(file);
+    }
+  }
+  // Upload thumbnail image to server
+  uploadThumbnail() {
+    if (this.selectedFile) {
+      const formData = new FormData();
+      formData.append('file', this.selectedFile);
+      formData.append('courseId', this.selectedCourseId.toString());
+
+      this.courseService.uploadThumbnail(formData).subscribe({
+        next: () => {
+          this.toastrService.success('Thumbnail uploaded successfully');
+          this.getAllCourses(); // Refresh the list with the new thumbnail
+          this.modalRef.hide(); // Close the modal after upload
+        },
+        error: (err) => {
+          this.toastrService.error('Error uploading thumbnail', err);
+        },
+      });
     }
   }
 }
