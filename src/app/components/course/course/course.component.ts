@@ -17,7 +17,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class CourseComponent implements OnInit {
   courseForm!: FormGroup;
   sessionCollapsed: boolean[] = [];
-  categories: CourseCategory[] = []; // populated from the API
+  categories: CourseCategory[] = [];
   instructors: Instructor[] = [];
   isEditMode: boolean = false;
   courseId!: number;

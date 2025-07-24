@@ -1,12 +1,12 @@
 import { CourseCategory } from "./category.model";
 import { SessionDetail } from "./sessionDetail.model";
 import { UserRating } from "./userRating.model";
+import { UserReview } from "./userReview.model";
 
 export interface Course {
   courseId: number;
   title: string;
   description: string;
-  thumbnail?: string;
   price: number;
   courseType: 'Online' | 'Offline';
   seatsAvailable: number | null;
@@ -15,7 +15,9 @@ export interface Course {
   instructorId: number;
   startDate: string | null;
   endDate: string | null;
-  category?: CourseCategory;
-  userRating?: UserRating;
+  thumbnail?: string;
+  category?: CourseCategory | null;
+  userRating?: UserRating | null;
+  reviews?:UserReview[] | null;
   sessionDetails?: SessionDetail[];
 }
