@@ -49,7 +49,7 @@
                 <div class="form-group col-md-6">
                     <label for="instructorId">Instructor</label>
                     <select id="instructorId" formControlName="instructorId" class="form-control">
-                        <!-- Bind categories dynamically -->
+                        <!-- Bind Instructor dynamically -->
                         <option value="" disabled selected>Select a option</option>
                         <option *ngFor="let instructor of instructors" [value]="instructor.instructorId">
                             {{ instructor.lastName }}, {{ instructor.firstName }}
