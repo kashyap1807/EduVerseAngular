@@ -19,7 +19,14 @@ import { ReviewFormComponent } from '../review-form/review-form.component';
 @Component({
   selector: 'app-course-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, SafePipe, RatingModule,ReviewFormComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    SafePipe,
+    RatingModule,
+    ReviewFormComponent,
+  ],
   templateUrl: './course-details.component.html',
   styleUrl: './course-details.component.css',
 })
@@ -105,6 +112,9 @@ export class CourseDetailsComponent implements OnInit {
     //   this.courseDetails = data;
     // });
   }
+  viewEnrollment() {
+    this.router.navigate([`/course/enrollments`]);
+  }
   enroll(): void {
     if (!this.isLoggedIn || !this.courseDetails) return;
 
@@ -138,7 +148,8 @@ export class CourseDetailsComponent implements OnInit {
 
     this.enrollmentService.enrollCourse(enrollmentModel).subscribe({
       next: (response) => {
-        this.toastr.success('Enrollment successful!');        
+        this.toastr.success('Enrollment successful!');
+        this.viewEnrollment();
       },
       error: (error) => {
         if (error.status === 400) {
