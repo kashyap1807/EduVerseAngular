@@ -179,6 +179,7 @@ export class CourseComponent implements OnInit {
         this.courseService.createCourse(formData).subscribe((response) => {
           console.log('Course created successfully:', response);
           this.courseForm.reset();
+          this.viewCourses();
         });
       }
     } else {
