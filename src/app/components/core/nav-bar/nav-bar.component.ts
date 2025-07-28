@@ -8,6 +8,9 @@ import { LoginService } from '../../../services/login.service';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { Claim } from '../../../models/claim.model';
 import { UserProfileService } from '../../../services/user-profile.service';
+import { Course } from '../../../models/course.model';
+import { CourseService } from '../../../services/course.service';
+import { ElementRef, HostListener, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-nav-bar',
@@ -16,6 +19,7 @@ import { UserProfileService } from '../../../services/user-profile.service';
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css',
 })
+  
 export class NavBarComponent implements OnInit, OnDestroy {
   loginDisplay = false;
   isAdmin = false;
@@ -23,14 +27,27 @@ export class NavBarComponent implements OnInit, OnDestroy {
   private readonly _destroying$ = new Subject<void>();
   claims: Claim[] = [];
   profilePictureUrl = '';
+  searchQuery: string = '';
+  searchResults: Course[] = [];
+  showSearchResults: boolean = false;
+  loadingSearch: boolean = false;
 
+@ViewChild('searchBox') searchBox!: ElementRef;
+
+@HostListener('document:click', ['$event.target'])
+onClickOutside(targetElement: HTMLElement) {
+  if (this.searchBox && !this.searchBox.nativeElement.contains(targetElement)) {
+    this.showSearchResults = false;
+  }
+}
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private authService: MsalService,
     private msalBroadcastService: MsalBroadcastService,
     public loginService: LoginService,
     private router: Router,
-    private userService: UserProfileService
+    private userService: UserProfileService,
+    private courseService: CourseService
   ) {}
 
   ngOnInit(): void {
@@ -41,30 +58,29 @@ export class NavBarComponent implements OnInit, OnDestroy {
         this.isAdmin =
           roles[0].value.split(',').filter((f) => f === 'Admin').length > 0;
       }
-      
+
       // Get profile picture from claims
-      const pictureClaim = claims.find(c => c.claim === 'picture');
+      const pictureClaim = claims.find((c) => c.claim === 'picture');
       this.profilePictureUrl = pictureClaim?.value || '';
 
       this.getUserInfo();
     });
 
     // Handle initial redirect
-    this.authService.handleRedirectObservable()
-      .subscribe({
-        next: (result: AuthenticationResult) => {
-          if (result) {
-            const redirectStartPage = localStorage.getItem('redirectStartPage');
-            if (redirectStartPage) {
-              this.router.navigate([redirectStartPage]);
-              localStorage.removeItem('redirectStartPage');
-            }
+    this.authService.handleRedirectObservable().subscribe({
+      next: (result: AuthenticationResult) => {
+        if (result) {
+          const redirectStartPage = localStorage.getItem('redirectStartPage');
+          if (redirectStartPage) {
+            this.router.navigate([redirectStartPage]);
+            localStorage.removeItem('redirectStartPage');
           }
-        },
-        error: (error) => {
-          console.error('MSAL Redirect Error: ', error);
         }
-      });
+      },
+      error: (error) => {
+        console.error('MSAL Redirect Error: ', error);
+      },
+    });
 
     this.isIframe = window !== window.parent && !window.opener;
 
@@ -73,7 +89,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.setLoginDisplay();
 
     this.authService.instance.enableAccountStorageEvents();
-    
+
     // Handle account changes
     this.msalBroadcastService.msalSubject$
       .pipe(
@@ -95,7 +111,9 @@ export class NavBarComponent implements OnInit, OnDestroy {
     // Handle auth state changes
     this.msalBroadcastService.inProgress$
       .pipe(
-        filter((status: InteractionStatus) => status === InteractionStatus.None),
+        filter(
+          (status: InteractionStatus) => status === InteractionStatus.None
+        ),
         takeUntil(this._destroying$)
       )
       .subscribe(() => {
@@ -112,7 +130,10 @@ export class NavBarComponent implements OnInit, OnDestroy {
      */
     let activeAccount = this.authService.instance.getActiveAccount();
 
-    if (!activeAccount && this.authService.instance.getAllAccounts().length > 0) {
+    if (
+      !activeAccount &&
+      this.authService.instance.getAllAccounts().length > 0
+    ) {
       let accounts = this.authService.instance.getAllAccounts();
       // Set the first account as active if there is no active account
       this.authService.instance.setActiveAccount(accounts[0]);
@@ -124,11 +145,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
     if (userId && userId > 0) {
       this.userService.getUserProfile(userId).subscribe({
         next: (s) => {
-          this.profilePictureUrl = s.profilePictureUrl ? s.profilePictureUrl : '';
+          this.profilePictureUrl = s.profilePictureUrl
+            ? s.profilePictureUrl
+            : '';
         },
         error: (error) => {
           console.error('Error fetching user profile:', error);
-        }
+        },
       });
     }
   }
@@ -171,6 +194,28 @@ export class NavBarComponent implements OnInit, OnDestroy {
     } else {
       this.authService.logoutRedirect();
     }
+  }
+
+  onSearch(): void {
+    if (!this.searchQuery.trim()) {
+      this.searchResults = [];
+      this.showSearchResults = false;
+      return;
+    }
+
+    this.loadingSearch = true;
+    this.courseService.searchCourses(this.searchQuery).subscribe({
+      next: (courses) => {
+        this.searchResults = courses;
+        this.showSearchResults = true;
+        this.loadingSearch = false;
+      },
+      error: (error) => {
+        console.error('Search error:', error);
+        this.loadingSearch = false;
+        this.showSearchResults = false;
+      },
+    });
   }
 
   ngOnDestroy(): void {
