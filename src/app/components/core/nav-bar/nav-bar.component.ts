@@ -45,6 +45,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
       // Get profile picture from claims
       const pictureClaim = claims.find(c => c.claim === 'picture');
       this.profilePictureUrl = pictureClaim?.value || '';
+
+      this.getUserInfo();
     });
 
     // Handle initial redirect
