@@ -1,7 +1,7 @@
 <!-- src/app/category/category.component.html -->
 <div>
     <div class="text-content">
-      <h2>All the Skills You Need in One Place</h2>
+      <h1>All the Skills You Need in One Place</h1>
       <h5><small>From critical skills to technical topics, EduVerse supports your professional development.</small></h5>
     </div>
   
@@ -24,7 +24,7 @@
     </div>
   
     <!-- Horizontal Tab View -->
-  <div *ngIf="viewType === 'tabs'" class="carousel-container">
+  <!-- <div *ngIf="viewType === 'tabs'" class="carousel-container">
     <div  class="card category-card">
       <div class="card-body">
         <h5 class="card-title">
@@ -42,6 +42,52 @@
         <p class="card-text">{{ category.description }}</p>
         <a [routerLink]="['/course/category', category.categoryId]" class="btn btn-primary">Explore</a>
       </div>
+    </div>
+  </div> -->
+  <div class="carousel-wrapper">
+    <div *ngIf="viewType === 'tabs'" class="carousel-container auto-scroll">
+        
+        <!-- Your existing cards -->
+        <div class="card category-card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-bookmark-fill me-2"></i>All Courses
+                </h5>
+                <p class="card-text">Take a look at various courses available to enroll, learn and succeed career.</p>
+                <a [routerLink]="['/course/browseall']" class="btn btn-primary">Explore</a>
+            </div>
+        </div>
+        
+        <div *ngFor="let category of categories" class="card category-card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-bookmark-fill me-2"></i>{{ category.categoryName }}
+                </h5>
+                <p class="card-text">{{ category.description }}</p>
+                <a [routerLink]="['/course/category', category.categoryId]" class="btn btn-primary">Explore</a>
+            </div>
+        </div>
+
+        <!-- Duplicate cards for infinite scroll effect -->
+        <div class="card category-card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-bookmark-fill me-2"></i>All Courses
+                </h5>
+                <p class="card-text">Take a look at various courses available to enroll, learn and succeed career.</p>
+                <a [routerLink]="['/course/browseall']" class="btn btn-primary">Explore</a>
+            </div>
+        </div>
+        
+        <div *ngFor="let category of categories" class="card category-card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-bookmark-fill me-2"></i>{{ category.categoryName }}
+                </h5>
+                <p class="card-text">{{ category.description }}</p>
+                <a [routerLink]="['/course/category', category.categoryId]" class="btn btn-primary">Explore</a>
+            </div>
+        </div>
     </div>
   </div>
 

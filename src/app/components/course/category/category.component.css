@@ -4,16 +4,16 @@
     margin-bottom: 30px;
   }
   
-  .text-content h2 {
-    font-size: 2rem;
-    font-weight: 700;
+  .text-content h1 {
     margin-bottom: 10px;
+    font-size: 2.5rem;
+    font-weight: bold;
   }
   
   .text-content h5 {
-    font-size: 1.25rem;
-    color: #6c757d;
-    font-weight: 400;
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 40px;
   }
   
   /* Full-Width List View */
@@ -145,9 +145,8 @@
   /* Carousel Styles */
   .carousel-container {
     display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding: 10px 0;
+    transition: transform 0.5s ease-in-out;
+    width: max-content;
   }
   
   .carousel-container ::-webkit-scrollbar {
@@ -160,4 +159,31 @@
     margin-right: 15px;
     scroll-snap-align: start;
   }
-  
+.carousel-wrapper {
+    position: relative;
+    overflow: hidden;
+    margin: 20px 0;
+    padding: 10px 0;
+}
+.carousel-container.paused {
+    animation-play-state: paused;
+}
+/* Auto-scroll animation */
+@keyframes autoScroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.carousel-container.auto-scroll {
+    animation: autoScroll 60s linear infinite;
+}
+
+/* Optional: Pause on hover */
+.carousel-container:hover {
+    animation-play-state: paused;
+}
+
