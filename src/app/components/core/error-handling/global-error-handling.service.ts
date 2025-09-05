@@ -8,6 +8,6 @@ export class GlobalErrorHandler implements ErrorHandler {
   handleError(error: any): void {
     const toastr = this.injector.get(ToastrService);
     console.error('Global error caught:', error);
-    toastr.error('An unexpected error occurred. Please try again later.');
+    // toastr.error('An unexpected error occurred. Please try again later.');
   }
 }
