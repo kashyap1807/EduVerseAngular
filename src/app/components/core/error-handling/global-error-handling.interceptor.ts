@@ -27,9 +27,11 @@ export class GlobalErrorInterceptor implements HttpInterceptor {
             'Something wrong with the request, please correct it and send it again.'
           );
         } else if (error.status === 500) {
-          this.toastr.error('Server error');
+          this.toastr.error('Server 500 error');
         } else {
-          this.toastr.error('An unexpected error occurred');
+          this.toastr.error(
+            'Database has reached the monthly free amount allowance for this month'
+          );
         }
         // Updated throwError to pass a function
         return throwError(() => new Error(error.message));
